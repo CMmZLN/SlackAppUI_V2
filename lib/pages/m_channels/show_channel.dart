@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_unnecessary_containers
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -15,6 +16,7 @@ import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
 
 bool status = false;
+Timer? timer;
 
 class ShowChannel extends StatefulWidget {
   ShowChannel({super.key, required this.channelData});
@@ -36,15 +38,17 @@ class _ShowChannelState extends State<ShowChannel> {
   int channelId = 0;
   dynamic channelData = [];
   dynamic channelUsersLists = [];
-  List<Map<String, dynamic>> channelUsers = [];
+
+  int? mUserId;
   int? user_id;
   int? workspace_id;
   String? token = "";
   dynamic mChannelIds = [];
   bool isLoading = true;
-  List<String> mentionedNameList = [];
+  bool isScroll = true;
 
   Future<void> fetchData() async {
+    print("timer fetchData");
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
     workspace_id = await SharedPrefUtils.getInt("workspaceid");
@@ -67,6 +71,7 @@ class _ShowChannelState extends State<ShowChannel> {
   }
 
   Future<void> retrieveGroupMessage() async {
+    print("Timer retrieveGroupMessage");
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
     workspace_id = await SharedPrefUtils.getInt("workspaceid");
@@ -80,8 +85,8 @@ class _ShowChannelState extends State<ShowChannel> {
     );
     final dynamic data = json.decode(response.body);
     if (response.statusCode == 200) {
+      isLoading = false;
       setState(() {
-        isLoading = false;
         userCount = data["retrieveGroupMessage"]["u_count"];
         tGroupMessageDates =
             data["retrieveGroupMessage"]["t_group_message_dates"];
@@ -92,66 +97,272 @@ class _ShowChannelState extends State<ShowChannel> {
         channelData = data["retrieveGroupMessage"]["s_channel"];
         tGroupStarMsgids = data["retrieveGroupMessage"]["t_group_star_msgids"];
         channelUsersLists = data["retrieveGroupMessage"]["m_channel_users"];
-        for (var user in channelUsersLists) {
-          channelUsers
-              .add({"id": user["id"].toString(), "display": user["name"]});
-        }
       });
+      print("tGroupMessage   $tGroupMessage");
     }
   }
 
-  Future sendGroupMessage(String message, int channelId) async {
-    String? token;
-    int? userId;
-    int? workspaceId;
-
-    token = await SharedPrefUtils.getStr("token");
-    userId = await SharedPrefUtils.getInt("userid");
-    workspaceId = await SharedPrefUtils.getInt("workspaceid");
-    List sendMessageWords = message.split(" ");
-
-    // for (var word in sendMessageWords) {
-    //   if (word.startsWith("@")) {
-    //     mentionedNameList.add(word);
-    //   }
-    // }
-
-    if (message.isEmpty) {
-      return;
-    } else {
-      final response = await http.post(
-          Uri.parse("https://slackapi-team2.onrender.com/groupmsg"),
-          headers: <String, String>{
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode(<String, dynamic>{
-            'message': message,
-            'workspace_id': workspaceId,
-            'user_id': userId,
-            's_channel_id': channelId,
-            'mention_name': mentionedNameList
-          }));
-      setState(() {
-        if (response.statusCode == 200) {
-          status = true;
-        }
-      });
-    }
-  }
-
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   retrieveGroupMessage();
+  //   fetchData();
+  // }
   @override
   void initState() {
     super.initState();
+
     retrieveGroupMessage();
     fetchData();
+    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
+      if (timer?.isActive == true) {
+        retrieveGroupMessage();
+        fetchData();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    print("Dispose Channel");
+    timer?.cancel();
+    super.dispose();
+  }
+
+  Widget showMessages(
+      dynamic tGroupMessageDates,
+      dynamic tGroupMessageDatesSizes,
+      dynamic tGroupMessage,
+      DateFormat formatter,
+      DateFormat ymd,
+      dynamic tGroupStarMsgids,
+      dynamic channelData) {
+    ScrollController groupMessageDateScroller = ScrollController();
+    ScrollController groupMessageScroller = ScrollController();
+    // bool isScroll = true;
+
+    if (isScroll) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        groupMessageDateScroller.animateTo(
+          groupMessageDateScroller.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        );
+      });
+      print("hello show channel");
+      isScroll = false;
+    }
+
+    return Scrollbar(
+      child: ListView.builder(
+        controller: groupMessageDateScroller,
+        itemCount: tGroupMessageDates.length,
+        scrollDirection: Axis.vertical,
+        itemBuilder: (context, index1) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (tGroupMessageDatesSizes
+                .contains(tGroupMessageDates[index1]["created_date"]))
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+                    child: Text(
+                      tGroupMessageDates[index1]["created_date"],
+                      style: const TextStyle(
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(126, 22, 139, 14)),
+                    ),
+                  ),
+                  ListView.builder(
+                    controller: groupMessageScroller,
+                    shrinkWrap: true, // important
+                    itemCount: tGroupMessage.length,
+                    itemBuilder: (context, index) => Column(
+                      children: <Widget>[
+                        if (tGroupMessageDates[index1]["created_date"]
+                                .toString() ==
+                            ymd.format(DateTime.parse(
+                                tGroupMessage[index]["created_at"].toString())))
+                          Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "${index + 1}",
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                    flex: 7,
+                                    child: Text(
+                                      tGroupMessage[index]["name"],
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 3,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Text(
+                                      formatter.format(DateTime.parse(
+                                          tGroupMessage[index]["created_at"])),
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.zero,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton.icon(
+                                        onPressed: () {
+                                          timer?.cancel();
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ShowGroupThread(
+                                                        message: tGroupMessage[
+                                                            index],
+                                                        channelId:
+                                                            channelData["id"])),
+                                          );
+                                        },
+                                        icon: const Icon(
+                                          Icons.message,
+                                          size: 15,
+                                          color:
+                                              Color.fromARGB(126, 22, 139, 14),
+                                        ),
+                                        label: Text(
+                                          tGroupMessage[index]["count"]
+                                              .toString(),
+                                          style: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  126, 22, 139, 14)),
+                                        )),
+                                    if (tGroupStarMsgids
+                                        .contains(tGroupMessage[index]["id"]))
+                                      IconButton(
+                                          onPressed: () async {
+                                            await destroyStar(
+                                                tGroupMessage[index]["id"]);
+                                            // if (status == true) {
+                                            //   Navigator.pushAndRemoveUntil(
+                                            //       context,
+                                            //       MaterialPageRoute(
+                                            //           builder: (context) =>
+                                            //               ShowChannel(
+                                            //                   channelData:
+                                            //                       channelData)),
+                                            //       (route) => false);
+                                            // }
+                                          },
+                                          icon: const Icon(Icons.star),
+                                          color: const Color.fromARGB(
+                                              126, 22, 139, 14))
+                                    else
+                                      IconButton(
+                                          onPressed: () async {
+                                            await createStar(
+                                                tGroupMessage[index]["id"]);
+                                            // if (status == true) {
+                                            //   Navigator.pushAndRemoveUntil(
+                                            //       context,
+                                            //       MaterialPageRoute(
+                                            //           builder: (context) =>
+                                            //               ShowChannel(
+                                            //                   channelData:
+                                            //                       channelData)),
+                                            //       (route) => false);
+                                            // }
+                                          },
+                                          icon: const Icon(Icons.star_outline),
+                                          color: const Color.fromARGB(
+                                              126, 22, 139, 14)),
+                                  if(user_id == tGroupMessage[index]["m_user_id"])         
+                                    IconButton(
+                                      onPressed: () async {
+                                        await deleteGroupMessage(
+                                            tGroupMessage[index]["id"],
+                                            channelData["id"]);
+                                        // if (status == true) {
+                                        //   Navigator.pushAndRemoveUntil(
+                                        //       context,
+                                        //       MaterialPageRoute(
+                                        //           builder: (context) =>
+                                        //               ShowChannel(
+                                        //                   channelData:
+                                        //                       channelData)),
+                                        //       (route) => false);
+                                        // }
+                                      },
+                                      icon: const Icon(Icons.delete_outline),
+                                      color: const Color.fromARGB(
+                                          126, 22, 139, 14),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  const Padding(
+                                    padding: EdgeInsets.fromLTRB(60, 0, 20, 20),
+                                    child: Icon(Icons.arrow_forward),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 0, 0, 20),
+                                      child: Text(
+                                          tGroupMessage[index]["groupmsg"],
+                                          style: const TextStyle(fontSize: 18)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                  width: 370.0,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                          color: Color.fromARGB(
+                                              255, 206, 205, 205),
+                                          width: 1.0),
+                                    ),
+                                  )),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            else
+              const Text("Error"),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    String sendText = "";
-    GlobalKey<FlutterMentionsState> key = GlobalKey<FlutterMentionsState>();
-
     return Scaffold(
       appBar: const MyAppBarWidget(),
       drawer: const Leftpannel(),
@@ -170,17 +381,19 @@ class _ShowChannelState extends State<ShowChannel> {
                       Expanded(
                         child: Text(widget.channelData["channel_name"],
                             style: const TextStyle(
-                                color: Colors.black, fontSize: 20.0,fontWeight: FontWeight.bold)),
+                                color: Colors.black,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold)),
                       ),
                       const SizedBox(width: 10.0),
                       TextButton.icon(
                         onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ChannelUsers(channelData: channelData)),
-                              (route) => false);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ChannelUsers(channelData: channelData)),
+                          );
                         },
                         icon: const Icon(Icons.people, color: Colors.black),
                         label: Text(userCount.toString(),
@@ -193,18 +406,17 @@ class _ShowChannelState extends State<ShowChannel> {
                           if (mChannelIds.contains(channelId))
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EditChannel(
-                                            channelData: widget.channelData)),
-                                    (route) => false);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditChannel(
+                                          channelData: widget.channelData)),
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                   // Set the background color to gray
                                   elevation: 0,
-                                  shadowColor: Colors.transparent
-                                  ),
+                                  shadowColor: Colors.transparent),
                               child: const Row(
                                 children: [
                                   Icon(Icons.edit,
@@ -219,15 +431,18 @@ class _ShowChannelState extends State<ShowChannel> {
                           if (mChannelIds.contains(channelId))
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                               elevation: 0
-                               ,shadowColor: Colors.transparent
-                              ),
+                                  elevation: 0,
+                                  shadowColor: Colors.transparent),
                               onPressed: () => showDialog<String>(
-                                
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
-                                   insetPadding: const EdgeInsets.all(10),
-                                  title:  SizedBox(width: MediaQuery.of(context).size.width,child:  const Text('削除してもよろしいですか。',style: TextStyle(letterSpacing: 1),)),
+                                  insetPadding: const EdgeInsets.all(10),
+                                  title: SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: const Text(
+                                        '削除してもよろしいですか。',
+                                        style: TextStyle(letterSpacing: 1),
+                                      )),
                                   actions: <Widget>[
                                     TextButton(
                                       onPressed: () =>
@@ -236,6 +451,7 @@ class _ShowChannelState extends State<ShowChannel> {
                                     ),
                                     TextButton(
                                       onPressed: () {
+                                        timer?.cancel();
                                         deleteChannel(widget.channelData["id"]);
                                         Navigator.pushAndRemoveUntil(
                                             context,
@@ -276,103 +492,18 @@ class _ShowChannelState extends State<ShowChannel> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),
                         child: mChannelIds.contains(channelId)
-                            ? Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      child: FlutterMentions(
-                                        onMentionAdd: addMentionedUser,
-                                        onChanged: (value) {
-                                          sendText = value;
-                                        },
-                                        key: key,
-                                        suggestionPosition:
-                                            SuggestionPosition.Top,
-                                        maxLines: 1,
-                                        minLines: 1,
-                                        suggestionListDecoration: BoxDecoration(
-                                          color:
-                                              Colors.white, // Background color
-                                          borderRadius: BorderRadius.circular(
-                                              10.0), // Border radius
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.2),
-                                                blurRadius: 5.0)
-                                          ], // Shadow
-                                        ),
-                                        decoration: const InputDecoration(
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: 10,
-                                                    horizontal: 10),
-                                            hintText: 'メッセージを入力してください',
-                                            border: OutlineInputBorder()),
-                                        mentions: [
-                                          Mention(
-                                              trigger: '@',
-                                              style: const TextStyle(
-                                                color: Colors.blue,
-                                              ),
-                                              data: channelUsers,
-                                              matchAll: false,
-                                              suggestionBuilder: (data) {
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          20, 0, 0, 0),
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10.0),
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        const SizedBox(
-                                                          width: 20.0,
-                                                        ),
-                                                        Column(
-                                                          children: <Widget>[
-                                                            Text(
-                                                              data['display'],
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          20.0),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              }),
-                                          Mention(
-                                            trigger: '#',
-                                            disableMarkup: true,
-                                            style: const TextStyle(
-                                              color: Colors.blue,
-                                            ),
-                                            matchAll: true,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5.0),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      elevation: 0,
-                                      shadowColor: Colors.transparent,
-                                        minimumSize: const Size(50, 50),
-                                        backgroundColor:
-                                            const Color.fromARGB(126, 22, 139, 14),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5))),
+                            ? Padding(
+                                padding: const EdgeInsets.only(bottom: 9),
+                                child: SendGroupMessageInput(
+                                    channelData: channelData,
+                                    channelId: channelId,
+                                    channelUsersLists: channelUsersLists))
+                            : SizedBox(
+                                height: 60,
+                                child: ElevatedButton(
                                     onPressed: () async {
-                                      await sendGroupMessage(
-                                          sendText, channelId);
+                                      await channelJoin(channelId);
+                                      print("From show channel $status");
                                       if (status == true) {
                                         Navigator.pushAndRemoveUntil(
                                             context,
@@ -384,45 +515,23 @@ class _ShowChannelState extends State<ShowChannel> {
                                             (route) => false);
                                       }
                                     },
-                                    child: const Text("送信",
-                                        style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold)),
-                                  )
-                                ],
-                              )
-                            : SizedBox(height:60 ,
-                              
-                              child: ElevatedButton(
-                                  onPressed: () async {
-                                    await channelJoin(channelId);
-                                    print("From show channel $status");
-                                    if (status == true) {
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => ShowChannel(
-                                                  channelData: channelData)),
-                                          (route) => false);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                    elevation: 0,
-                                    shadowColor: Colors.transparent,
-                                      backgroundColor:const Color.fromARGB(126, 22, 139, 14)),
-                                  child: const Text("参加",
-                                      style: TextStyle(
-                                          fontSize: 20, color: Colors.white,fontWeight: FontWeight.bold))),
-                            ))
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        elevation: 0,
+                                        shadowColor: Colors.transparent,
+                                        backgroundColor: const Color.fromARGB(
+                                            126, 22, 139, 14)),
+                                    child: const Text("参加",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold))),
+                              ))
               ],
             ),
     );
-  }
-
-  void addMentionedUser(Map userData) {
-    String userId = userData["id"];
-    String userName = userData["display"];
-    mentionedNameList.add(userName);
   }
 }
 
@@ -462,9 +571,9 @@ Future createStar(int msgId) async {
         'user_id': userId,
       }));
 
-  if (response.statusCode == 201) {
-    status = true;
-  }
+  // if (response.statusCode == 201) {
+  //   status = true;
+  // }
 }
 
 Future destroyStar(int msgId) async {
@@ -521,222 +630,174 @@ Future deleteChannel(int channelId) async {
       body: jsonEncode(<String, dynamic>{'s_channel_id': channelId}));
 }
 
-Widget showMessages(
-    dynamic tGroupMessageDates,
-    dynamic tGroupMessageDatesSizes,
-    dynamic tGroupMessage,
-    DateFormat formatter,
-    DateFormat ymd,
-    dynamic tGroupStarMsgids,
-    dynamic channelData) {
-  ScrollController groupMessageDateScroller = ScrollController();
-  ScrollController groupMessageScroller = ScrollController();
+class SendGroupMessageInput extends StatefulWidget {
+  dynamic channelData;
+  int channelId;
+  dynamic channelUsersLists;
+  List<Map<String, dynamic>> channelUsers = [];
+  SendGroupMessageInput(
+      {super.key,
+      required this.channelData,
+      required this.channelId,
+      required this.channelUsersLists});
 
-  SchedulerBinding.instance.addPersistentFrameCallback((_) {
-    groupMessageDateScroller.animateTo(
-      groupMessageDateScroller.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.linear,
-    );
-  });
+  @override
+  State<SendGroupMessageInput> createState() => _SendGroupMessageInputState();
+}
 
-  return Scrollbar(
-    child: ListView.builder(
-      controller: groupMessageDateScroller,
-      itemCount: tGroupMessageDates.length,
-      scrollDirection: Axis.vertical,
-      itemBuilder: (context, index1) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (tGroupMessageDatesSizes
-              .contains(tGroupMessageDates[index1]["created_date"]))
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: Text(
-                    tGroupMessageDates[index1]["created_date"],
+class _SendGroupMessageInputState extends State<SendGroupMessageInput> {
+  List<String> mentionedNameList = [];
+  String sendText = "";
+  GlobalKey<FlutterMentionsState> key = GlobalKey<FlutterMentionsState>();
+  @override
+  Widget build(BuildContext context) {
+    for (var user in widget.channelUsersLists) {
+      widget.channelUsers
+          .add({"id": user["id"].toString(), "display": user["name"]});
+    }
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            child: FlutterMentions(
+              onMentionAdd: addMentionedUser,
+              onChanged: (value) {
+                sendText = value;
+              },
+              key: key,
+              suggestionPosition: SuggestionPosition.Top,
+              maxLines: 1,
+              minLines: 1,
+              suggestionListDecoration: BoxDecoration(
+                color: Colors.white, // Background color
+                borderRadius: BorderRadius.circular(10.0), // Border radius
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.grey.withOpacity(0.2), blurRadius: 5.0)
+                ], // Shadow
+              ),
+              decoration: const InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  hintText: 'メッセージを入力してください',
+                  border: OutlineInputBorder()),
+              mentions: [
+                Mention(
+                    trigger: '@',
                     style: const TextStyle(
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(126, 22, 139, 14)),
-                  ),
-                ),
-                ListView.builder(
-                  controller: groupMessageScroller,
-                  shrinkWrap: true, // important
-                  itemCount: tGroupMessage.length,
-                  itemBuilder: (context, index) => Column(
-                    children: <Widget>[
-                      if (tGroupMessageDates[index1]["created_date"]
-                              .toString() ==
-                          ymd.format(DateTime.parse(
-                              tGroupMessage[index]["created_at"].toString())))
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  "${index + 1}",
-                                  style: const TextStyle(fontSize: 18),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  flex: 7,
-                                  child: Text(
-                                    tGroupMessage[index]["name"],
-                                    style: const TextStyle(fontSize: 18),
+                      color: Colors.blue,
+                    ),
+                    data: widget.channelUsers,
+                    matchAll: false,
+                    suggestionBuilder: (data) {
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Container(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Row(
+                            children: <Widget>[
+                              const SizedBox(
+                                width: 20.0,
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Text(
+                                    data['display'],
+                                    style: const TextStyle(fontSize: 20.0),
                                   ),
-                                ),
-                                const SizedBox(
-                                  width: 3,
-                                ),
-                                Text(formatter.format(DateTime.parse(
-                                    tGroupMessage[index]["created_at"]))),
-                                Padding(
-                                  padding: EdgeInsets.zero,
-                                  child: Row(
-                                    children: [
-                                      TextButton.icon(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ShowGroupThread(
-                                                          message:
-                                                              tGroupMessage[
-                                                                  index],
-                                                          channelId:
-                                                              channelData[
-                                                                  "id"])),
-                                            );
-                                          },
-                                          icon: const Icon(
-                                            Icons.message,
-                                            size: 15,
-                                            color: Color.fromARGB(
-                                                126, 22, 139, 14),
-                                          ),
-                                          label: Text(
-                                            tGroupMessage[index]["count"]
-                                                .toString(),
-                                            style: const TextStyle(
-                                                color: Color.fromARGB(
-                                                    126, 22, 139, 14)),
-                                          )),
-                                      if (tGroupStarMsgids
-                                          .contains(tGroupMessage[index]["id"]))
-                                        IconButton(
-                                            onPressed: () async {
-                                              await destroyStar(
-                                                  tGroupMessage[index]["id"]);
-                                              if (status == true) {
-                                                Navigator.pushAndRemoveUntil(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ShowChannel(
-                                                                channelData:
-                                                                    channelData)),
-                                                    (route) => false);
-                                              }
-                                            },
-                                            icon: const Icon(Icons.star),
-                                            color: const Color.fromARGB(
-                                                126, 22, 139, 14))
-                                      else
-                                        IconButton(
-                                            onPressed: () async {
-                                              await createStar(
-                                                  tGroupMessage[index]["id"]);
-                                              if (status == true) {
-                                                Navigator.pushAndRemoveUntil(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ShowChannel(
-                                                                channelData:
-                                                                    channelData)),
-                                                    (route) => false);
-                                              }
-                                            },
-                                            icon:
-                                                const Icon(Icons.star_outline),
-                                            color: const Color.fromARGB(
-                                                126, 22, 139, 14)),
-                                      IconButton(
-                                        onPressed: () async {
-                                          await deleteGroupMessage(
-                                              tGroupMessage[index]["id"],
-                                              channelData["id"]);
-                                          if (status == true) {
-                                            Navigator.pushAndRemoveUntil(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ShowChannel(
-                                                            channelData:
-                                                                channelData)),
-                                                (route) => false);
-                                          }
-                                        },
-                                        icon: const Icon(Icons.delete_outline),
-                                        color: const Color.fromARGB(
-                                            126, 22, 139, 14),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: <Widget>[
-                                const Padding(
-                                  padding: EdgeInsets.fromLTRB(60, 0, 20, 20),
-                                  child: Icon(Icons.arrow_forward),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                                    child: Text(
-                                        tGroupMessage[index]["groupmsg"],
-                                        style: const TextStyle(fontSize: 18)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                                width: 370.0,
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        color:
-                                            Color.fromARGB(255, 206, 205, 205),
-                                        width: 1.0),
-                                  ),
-                                )),
-                          ],
+                                ],
+                              )
+                            ],
+                          ),
                         ),
-                    ],
+                      );
+                    }),
+                Mention(
+                  trigger: '#',
+                  disableMarkup: true,
+                  style: const TextStyle(
+                    color: Colors.blue,
                   ),
-                ),
+                  matchAll: true,
+                )
               ],
-            )
-          else
-            const Text("Error"),
-        ],
-      ),
-    ),
-  );
+            ),
+          ),
+        ),
+        const SizedBox(width: 5.0),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              minimumSize: const Size(50, 50),
+              backgroundColor: const Color.fromARGB(126, 22, 139, 14),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5))),
+          onPressed: () async {
+            await sendGroupMessage(sendText, widget.channelId);
+            if (status == true) {
+              key.currentState?.controller?.clear();
+              // Navigator.pushAndRemoveUntil(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) =>
+              //             ShowChannel(channelData: widget.channelData)),
+              //     (route) => false);
+            }
+          },
+          child: const Text("送信",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
+        )
+      ],
+    );
+  }
+
+  void addMentionedUser(Map userData) {
+    String userId = userData["id"];
+    String userName = userData["display"];
+    mentionedNameList.add(userName);
+  }
+
+  Future sendGroupMessage(String message, int channelId) async {
+    String? token;
+    int? userId;
+    int? workspaceId;
+
+    token = await SharedPrefUtils.getStr("token");
+    userId = await SharedPrefUtils.getInt("userid");
+    workspaceId = await SharedPrefUtils.getInt("workspaceid");
+    List sendMessageWords = message.split(" ");
+
+    // for (var word in sendMessageWords) {
+    //   if (word.startsWith("@")) {
+    //     mentionedNameList.add(word);
+    //   }
+    // }
+
+    if (message.isEmpty) {
+      return;
+    } else {
+      final response = await http.post(
+          Uri.parse("https://slackapi-team2.onrender.com/groupmsg"),
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'message': message,
+            'workspace_id': workspaceId,
+            'user_id': userId,
+            's_channel_id': channelId,
+            'mention_name': mentionedNameList
+          }));
+      setState(() {
+        if (response.statusCode == 200) {
+          status = true;
+        }
+      });
+    }
+  }
 }

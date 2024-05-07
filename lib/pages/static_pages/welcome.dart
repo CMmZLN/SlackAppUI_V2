@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/m_workspace/new.dart';
 import 'package:Team2SlackApp/pages/sessions/new.dart';
-import "package:flutter/services.dart";
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -13,8 +12,6 @@ class Welcome extends StatefulWidget {
 class _WelcomeState extends State<Welcome> {
   @override
   Widget build(BuildContext context) {
-   
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -33,8 +30,8 @@ class _WelcomeState extends State<Welcome> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Center(
-              child: const Text(
+            const Center(
+              child: Text(
                 'スラックアプリ',
                 style: TextStyle(
                   fontSize: 30,
@@ -42,8 +39,8 @@ class _WelcomeState extends State<Welcome> {
                 ),
               ),
             ),
-            Center(
-              child: const Text(
+            const Center(
+              child: Text(
                 'からようこそ',
                 style: TextStyle(
                   fontSize: 30,
@@ -68,7 +65,7 @@ class _WelcomeState extends State<Welcome> {
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5)))),
               child: const Text(
-                'サインイン',
+                'ログイン',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,

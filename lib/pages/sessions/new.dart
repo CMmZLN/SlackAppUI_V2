@@ -41,6 +41,7 @@ class _LoginState extends State<Login> {
     if (body['errors'] == null) {
       error = '';
       token = body['token'];
+      print("Token------> $token");
       user_workspace = body['user_workspace'];
       SharedPrefUtils.saveStr("token", body['token']);
       SharedPrefUtils.saveInt("userid", body['user_workspace']['userid']);
@@ -67,7 +68,7 @@ class _LoginState extends State<Login> {
           ),
         ),
         centerTitle: true,
-        backgroundColor:  const Color.fromARGB(126, 22, 139, 14),
+        backgroundColor: const Color.fromARGB(126, 22, 139, 14),
       ),
       body: Form(
         key: _formKey,
@@ -111,7 +112,7 @@ class _LoginState extends State<Login> {
               ),
               const Text(
                 'ワークスペース名',
-                style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               TextFormField(
                 controller: workspaceNameController,
@@ -125,7 +126,7 @@ class _LoginState extends State<Login> {
               ),
               const Text(
                 'メール',
-                style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               TextFormField(
                 controller: emailController,
@@ -139,7 +140,7 @@ class _LoginState extends State<Login> {
               ),
               const Text(
                 'パスワード',
-                style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               TextFormField(
                 controller: passwordController,

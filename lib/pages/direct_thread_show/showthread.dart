@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -59,24 +61,17 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
   String directMsg = "";
   String directMsgDate = "";
 
+  Timer? timer;
+
+  bool isScroll = true;
+
   // Map<String,dynamic>? t_direct;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchDirectThreadMsg(widget.id);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   Future<void> _fetchDirectThreadMsg(int tDirectMessageId) async {
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
     s_user_id = await SharedPrefUtils.getInt("s_user_id");
-
+    print("Direct Thread Working");
     final response = await http.get(
       Uri.parse(
           "https://slackapi-team2.onrender.com/directthreadmsg?t_direct_message_id=$tDirectMessageId&user_id=$user_id&s_user_id=$s_user_id"),
@@ -86,17 +81,19 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
       },
     );
     if (response.statusCode == 200) {
-      setState(() {
-        final data = jsonDecode(response.body);
-        s_user_name = data['s_user']['name'];
-        t_direct_msg = data['t_direct_message'];
-        t_direct_thread = data['t_direct_threads'];
-        t_direct_star_thread_msgids = data['t_direct_star_thread_msgids'];
-        send_user_name = data['send_user']["name"];
-        directMsg = data['t_direct_message']["directmsg"];
-        directMsgDate = DateFormat('yyyy-MM-dd hh:m a')
-            .format(DateTime.parse(t_direct_msg['created_at'].toString()));
-      });
+      // setState(() {
+      final data = jsonDecode(response.body);
+      print('data.........');
+      print(data);
+      s_user_name = data['s_user']['name'];
+      t_direct_msg = data['t_direct_message'];
+      t_direct_thread = data['t_direct_threads'];
+      t_direct_star_thread_msgids = data['t_direct_star_thread_msgids'];
+      send_user_name = data['send_user']["name"];
+      directMsg = data['t_direct_message']["directmsg"];
+      directMsgDate = DateFormat('yyyy-MM-dd hh:m a')
+          .format(DateTime.parse(t_direct_msg['created_at'].toString()));
+      // });
     } else {
       throw Exception("Failed to load data");
     }
@@ -117,15 +114,15 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      if (response.statusCode == 200) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => DirectThreadShow(id: sDirectMessageId)),
-        );
-      } else {
-        throw Exception('Failed to delete data');
-      }
+      // if (response.statusCode == 200) {
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) => DirectThreadShow(id: sDirectMessageId)),
+      //   );
+      // } else {
+      //   throw Exception('Failed to delete data');
+      // }
     } catch (error) {
       print(error);
     }
@@ -148,17 +145,17 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
           body: jsonEncode(<String, dynamic>{
             't_direct_message_id': tDirectMessageId,
           }));
-      if (response.statusCode == 200) {
-        setState(() {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => DirectThreadShow(id: tDirectMessageId)),
-          );
-        });
-      } else {
-        throw Exception('Failed to star message');
-      }
+      // if (response.statusCode == 200) {
+      //   setState(() {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //           builder: (context) => DirectThreadShow(id: tDirectMessageId)),
+      //     );
+      //   });
+      // } else {
+      //   throw Exception('Failed to star message');
+      // }
     } catch (error) {
       print(error);
     }
@@ -182,13 +179,13 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
             't_direct_message_id': tDirectMessageId,
           }));
       if (response.statusCode == 200) {
-        setState(() {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => DirectThreadShow(id: tDirectMessageId)),
-          );
-        });
+        // setState(() {
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => DirectThreadShow(id: tDirectMessageId)),
+        //   );
+        // });
       } else {
         throw Exception('Failed to unstar message');
       }
@@ -198,8 +195,44 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _fetchDirectThreadMsg(widget.id);
+    timer = Timer.periodic(
+        const Duration(seconds: 2),
+        (Timer t) => setState(() {
+              _fetchDirectThreadMsg(widget.id);
+            }));
+
+    // timer = Timer.periodic(
+    //     const Duration(seconds: 2),
+    //     (Timer t) => {
+    //           if (timer?.isActive == true) {_fetchDirectThreadMsg(widget.id)}
+    //         });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  ScrollController directThreadMessageScroller = ScrollController();
+  @override
   Widget build(BuildContext context) {
+    if (directThreadMessageScroller.hasClients && isScroll) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        directThreadMessageScroller.animateTo(
+          directThreadMessageScroller.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 60),
+          curve: Curves.easeOut,
+        );
+        print("Scroller Work in directThread.");
+      });
+      isScroll = false;
+    }
     return CustomScrollView(
+      controller: directThreadMessageScroller,
       slivers: <Widget>[
         SliverList(
           delegate: SliverChildListDelegate(
@@ -210,7 +243,6 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
-                      
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -222,7 +254,6 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
                         const SizedBox(
                           height: 8,
                         ),
-                        
                       ],
                     ),
                   ),
@@ -303,8 +334,9 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
           delegate: SliverChildListDelegate(
             [
               const Padding(
-                padding:  EdgeInsets.only(left:20 ,  top:10 , bottom:10 , right:20 ),
-                child:  Text(
+                padding:
+                    EdgeInsets.only(left: 20, top: 10, bottom: 10, right: 20),
+                child: Text(
                   '返事',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -344,7 +376,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
                           Expanded(
                             flex: 4,
                             child: Text(
-                              send_user_name,
+                              t_direct_thread[index]["name"],
                               style: const TextStyle(
                                 fontSize: 18,
                               ),
@@ -381,19 +413,20 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
                                 ),
                               ),
                             ),
-                          Expanded(
-                            child: IconButton(
-                              onPressed: () {
-                                _deleteDirectThreadMsg(
-                                    t_direct_thread[index]['id']);
-                              },
-                              icon: const Icon(
-                                Icons.delete,
-                                size: 25,
-                                color: Color.fromARGB(126, 22, 139, 14),
+                          if (user_id == t_direct_thread[index]["m_user_id"])
+                            Expanded(
+                              child: IconButton(
+                                onPressed: () {
+                                  _deleteDirectThreadMsg(
+                                      t_direct_thread[index]['id']);
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  size: 25,
+                                  color: Color.fromARGB(126, 22, 139, 14),
+                                ),
                               ),
                             ),
-                          ),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -483,6 +516,7 @@ class _SendDirectThreadMessageState extends State<SendDirectThreadMessage> {
             child: TextFormField(
               controller: messageController,
               decoration: const InputDecoration(
+                  hintText: "メッセージを入力してください",
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                   contentPadding: EdgeInsets.all(5)),
@@ -493,17 +527,19 @@ class _SendDirectThreadMessageState extends State<SendDirectThreadMessage> {
             onPressed: () async {
               await _sendDirectThread(widget.id);
               if (status == true) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DirectThreadShow(
-                        id: widget.id,
-                      ),
-                    ));
+                messageController.clear();
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) => DirectThreadShow(
+                //         id: widget.id,
+                //       ),
+                //     ));
               }
             },
             style: TextButton.styleFrom(
-                backgroundColor: Color.fromARGB(126, 22, 139, 14),
+                fixedSize: const Size(80, 48),
+                backgroundColor: const Color.fromARGB(126, 22, 139, 14),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5))),
             child: const Text(

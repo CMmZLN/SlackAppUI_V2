@@ -1,3 +1,6 @@
+import 'dart:async';
+// import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
@@ -54,21 +57,16 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
   int? s_user_id;
   int? r_direct_size;
   int? workspace_id;
+  Timer? timer;
+  bool isScroll = true;
+
+  // int? mUserId;
+  ScrollController directMessageScroller = ScrollController();
 
   // Map<String,dynamic>? t_direct;
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchDirectMsgLists();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> _fetchDirectMsgLists() async {
+    print('timer loaded............');
     token = await SharedPrefUtils.getStr("token");
     s_user_id = await SharedPrefUtils.getInt("s_user_id");
     user_id = await SharedPrefUtils.getInt("userid");
@@ -84,12 +82,13 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
     );
 
     if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
       setState(() {
-        final data = jsonDecode(response.body);
         s_user_name = data['s_user']['name'];
         t_direct_msg = data['t_direct_messages'];
         t_direct_star_msgids = data['t_direct_star_msgids'];
       });
+      print(t_direct_msg);
     } else {
       throw Exception("Failed to load data");
     }
@@ -103,14 +102,14 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json; charset=UTF-8',
           });
-      if (response.statusCode == 200) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const directmsgshow()),
-        );
-      } else {
-        throw Exception('Failed to delete data');
-      }
+      // if (response.statusCode == 200) {
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => const directmsgshow()),
+      //   );
+      // } else {
+      //   throw Exception('Failed to delete data');
+      // }
     } catch (error) {
       print(error);
     }
@@ -125,14 +124,14 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json; charset=UTF-8',
           });
-      if (response.statusCode == 200) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const directmsgshow()),
-        );
-      } else {
-        throw Exception('Failed to star message');
-      }
+      // if (response.statusCode == 200) {
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => const directmsgshow()),
+      //   );
+      // } else {
+      //   throw Exception('Failed to star message');
+      // }
     } catch (error) {
       print(error);
     }
@@ -147,28 +146,28 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json; charset=UTF-8',
           });
-      if (response.statusCode == 200) {
-        setState(() {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const directmsgshow()),
-          );
-        });
-      } else {
-        throw Exception('Failed to unstar message');
-      }
+      // if (response.statusCode == 200) {
+      //   setState(() {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(builder: (context) => const directmsgshow()),
+      //     );
+      //   });
+      // } else {
+      //   throw Exception('Failed to unstar message');
+      // }
     } catch (error) {
       print(error);
     }
   }
 
   Future<void> _directmsgshow(int id) async {
-    setState(() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => DirectThreadShow(id: id)),
-      );
-    });
+    // setState(() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => DirectThreadShow(id: id)),
+    );
+    // });
   }
 
   Future<void> _refreshDirectMessages() async {
@@ -210,15 +209,51 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _fetchDirectMsgLists();
+    timer = Timer.periodic(
+        const Duration(seconds: 2),
+        (Timer t) => {
+              if (timer?.isActive == true) {_fetchDirectMsgLists()}
+            });
+  }
+
+  @override
+  void dispose() {
+    print("in dispose>>>>");
+    timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    ScrollController directMessageScroller = ScrollController();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      directMessageScroller.animateTo(
-        directMessageScroller.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 60),
-        curve: Curves.easeOut,
-      );
-    });
+    // print("Scrolll");
+    // print(isScroll);
+
+    // Perform your task
+    if (directMessageScroller.hasClients && isScroll) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        directMessageScroller.animateTo(
+          directMessageScroller.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 60),
+          curve: Curves.easeOut,
+        );
+      });
+      isScroll = false;
+    }
+
+    // if (!isScroll) {
+    //   print("method");
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     directMessageScroller.animateTo(
+    //       directMessageScroller.position.maxScrollExtent,
+    //       duration: const Duration(milliseconds: 60),
+    //       curve: Curves.easeOut,
+    //     );
+    //   });
+    //   isScroll = true;
+    // }
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SizedBox(
@@ -237,7 +272,6 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
               // const SizedBox(
               //   height: 3,
               // ),
-              
             ],
           ),
         ),
@@ -330,16 +364,17 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
                                   color: Color.fromARGB(126, 22, 139, 14),
                                 ),
                               ),
-                            IconButton(
-                              onPressed: () {
-                                _deleteDirectMsg(tDirect['id']);
-                              },
-                              icon: const Icon(
-                                Icons.delete,
-                                size: 25,
-                                color: Color.fromARGB(126, 22, 139, 14),
+                            if (user_id == tDirect["send_user_id"])
+                              IconButton(
+                                onPressed: () {
+                                  _deleteDirectMsg(tDirect['id']);
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  size: 25,
+                                  color: Color.fromARGB(126, 22, 139, 14),
+                                ),
                               ),
-                            ),
                           ],
                         ),
                         const SizedBox(
@@ -435,6 +470,7 @@ class _SendDirectMessageState extends State<SendDirectMessage> {
             child: TextFormField(
               controller: _messageController,
               decoration: const InputDecoration(
+                  hintText: "メッセージを入力してください",
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                   contentPadding: EdgeInsets.all(5)),
@@ -445,14 +481,16 @@ class _SendDirectMessageState extends State<SendDirectMessage> {
             onPressed: () async {
               await _sendDirectmsgLists();
               if (status == true) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const directmsgshow()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) => const directmsgshow()),
+                // );
+                _messageController.clear();
               }
             },
             style: TextButton.styleFrom(
+                fixedSize: const Size(80, 48),
                 backgroundColor: const Color.fromARGB(126, 22, 139, 14),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5))),

@@ -101,20 +101,42 @@ class _LeftpannelState extends State<Leftpannel> {
                         workspaceName,
                         // child: Text('CMM',
                         style: const TextStyle(
-                            color: Colors.white, fontSize: 20.0,fontWeight: FontWeight.bold),
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Text(
-                      userName,
-                      style:
-                          const TextStyle(color: Colors.white, fontSize: 20.0,fontWeight: FontWeight.bold),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.person_outline,
+                          size: 35,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          userName,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ]),
             ),
             ListTile(
-              leading: const Icon(Icons.menu,color:  Color.fromARGB(126, 22, 139, 14),),
+              leading: const Icon(
+                Icons.menu,
+                color: Color.fromARGB(126, 22, 139, 14),
+              ),
               title: const Text('全未読',
-                  style: TextStyle(color: Colors.black, fontSize: 16,fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold)),
               trailing: all_unread_count > 0
                   ? Text(
                       all_unread_count.toString(),
@@ -125,37 +147,49 @@ class _LeftpannelState extends State<Leftpannel> {
                     )
                   : const Text(""),
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const AllUnread()),
                 );
               },
             ),
             ListTile(
-              leading: const Icon(Icons.message,color:  Color.fromARGB(126, 22, 139, 14),),
-              title: const Text('スレッド', style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+              leading: const Icon(
+                Icons.message,
+                color: Color.fromARGB(126, 22, 139, 14),
+              ),
+              title: const Text('スレッド',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const Thread()),
                 );
               },
             ),
             ListTile(
-              leading: const Icon(Icons.star,color:  Color.fromARGB(126, 22, 139, 14),),
-              title: const Text('スター', style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+              leading: const Icon(
+                Icons.star,
+                color: Color.fromARGB(126, 22, 139, 14),
+              ),
+              title: const Text('スター',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const StarLists()),
                 );
               },
             ),
             ListTile(
-              leading: const Icon(Icons.alternate_email,color:  Color.fromARGB(126, 22, 139, 14),),
-              title: const Text('アクティピテイ', style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+              leading: const Icon(
+                Icons.alternate_email,
+                color: Color.fromARGB(126, 22, 139, 14),
+              ),
+              title: const Text('アクティピテイ',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const MentionLists()),
                 );
@@ -163,23 +197,31 @@ class _LeftpannelState extends State<Leftpannel> {
             ),
             if (admin == 'true')
               ListTile(
-                leading: const Icon(Icons.edit,color:  Color.fromARGB(126, 22, 139, 14),),
-                title: const Text('ユーザ管理', style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+                leading: const Icon(
+                  Icons.edit,
+                  color: Color.fromARGB(126, 22, 139, 14),
+                ),
+                title: const Text('ユーザ管理',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const UserManage()),
                   );
                 },
               ),
             ListTile(
-              leading: const Icon(Icons.add,color:  Color.fromARGB(126, 22, 139, 14),),
+              leading: const Icon(
+                Icons.add,
+                color: Color.fromARGB(126, 22, 139, 14),
+              ),
               title: const Text(
                 'メンバーを招待する',
-                style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
@@ -189,13 +231,16 @@ class _LeftpannelState extends State<Leftpannel> {
             ),
             SizedBox(
               child: ListTile(
-                leading: const Icon(Icons.add,color:  Color.fromARGB(126, 22, 139, 14),),
+                leading: const Icon(
+                  Icons.add,
+                  color: Color.fromARGB(126, 22, 139, 14),
+                ),
                 title: const Text(
                   'チャンネル',
-                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) => const ChannelCreate()),
@@ -219,12 +264,20 @@ class _LeftpannelState extends State<Leftpannel> {
                               fontSize: 20.0, color: Colors.red),
                         ),
                         leading: mChannels[index]["channel_status"]
-                            ? const Icon(Icons.public, size: 15,color:  Color.fromARGB(126, 22, 139, 14),)
-                            : const Icon(Icons.lock, size: 15,color:  Color.fromARGB(126, 22, 139, 14),),
+                            ? const Icon(
+                                Icons.public,
+                                size: 15,
+                                color: Color.fromARGB(126, 22, 139, 14),
+                              )
+                            : const Icon(
+                                Icons.lock,
+                                size: 15,
+                                color: Color.fromARGB(126, 22, 139, 14),
+                              ),
                         title: Text(mChannels[index]["channel_name"],
                             style: const TextStyle(fontSize: 16)),
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ShowChannel(
@@ -243,11 +296,15 @@ class _LeftpannelState extends State<Leftpannel> {
                     return Container(
                       padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
                       child: ListTile(
-                        leading: const Icon(Icons.public, size: 15,color: Color.fromARGB(126, 22, 139, 14),),
+                        leading: const Icon(
+                          Icons.public,
+                          size: 15,
+                          color: Color.fromARGB(126, 22, 139, 14),
+                        ),
                         title: Text(mPublicChannels[index]["channel_name"],
                             style: const TextStyle(fontSize: 16)),
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ShowChannel(
@@ -262,7 +319,8 @@ class _LeftpannelState extends State<Leftpannel> {
                   }
                 }),
             ListTile(
-              title: const Text('ダイレクトメッセージ', style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+              title: const Text('ダイレクトメッセージ',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -286,14 +344,31 @@ class _LeftpannelState extends State<Leftpannel> {
                 return Container(
                   padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
                   child: ListTile(
-                    leading: const Icon(Icons.person),
-                    title: Text(
-                      user["name"],
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                    leading: const Icon(Icons.person, color: Colors.black),
+                    title: user["active_status"]
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                user["name"],
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.fromLTRB(10, 1.5, 10, 0),
+                                child: Icon(Icons.circle,
+                                    size: 11,
+                                    color: Color.fromARGB(255, 32, 203, 38)),
+                              )
+                            ],
+                          )
+                        : Text(
+                            user["name"],
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                    dense: true,
                     onTap: () {
                       SharedPrefUtils.saveInt("s_user_id", user['id']);
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const directmsgshow()));

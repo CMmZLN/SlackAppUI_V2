@@ -100,6 +100,7 @@ class _StarListsState extends State<StarLists> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(
                             '${index + 1}.',
@@ -109,7 +110,7 @@ class _StarListsState extends State<StarLists> {
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            flex: 4,
+                            flex: 5,
                             child: Text(
                               tDirect['name'],
                               style: const TextStyle(
@@ -117,9 +118,9 @@ class _StarListsState extends State<StarLists> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 5.0),
+                          // const SizedBox(width: 5.0),
                           Expanded(
-                            flex: 5,
+                            flex: 8,
                             child: Text(
                               DateFormat('yyyy-MM-dd/ hh:mm a').format(
                                   DateTime.parse(tDirect['created_at'])),
@@ -153,7 +154,7 @@ class _StarListsState extends State<StarLists> {
                             ),
                           ),
                           Expanded(
-                            flex: 1,
+                            flex: 3,
                             child: IconButton(
                               onPressed: () {},
                               icon: const Icon(
@@ -200,6 +201,7 @@ class _StarListsState extends State<StarLists> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(
                             '${index + 1}.',
@@ -209,7 +211,7 @@ class _StarListsState extends State<StarLists> {
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            flex: 4,
+                            flex: 5,
                             child: Text(
                               tThread['name'],
                               style: const TextStyle(
@@ -217,9 +219,9 @@ class _StarListsState extends State<StarLists> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 5.0),
+                          // const SizedBox(width: 5.0),
                           Expanded(
-                            flex: 5,
+                            flex: 8,
                             child: Text(
                               DateFormat('yyyy-MM-dd/ hh:mm a').format(
                                   DateTime.parse(tThread['created_at'])),
@@ -253,7 +255,7 @@ class _StarListsState extends State<StarLists> {
                             ),
                           ),
                           Expanded(
-                            flex: 1,
+                            flex: 3,
                             child: IconButton(
                               onPressed: () {},
                               icon: const Icon(
@@ -300,6 +302,7 @@ class _StarListsState extends State<StarLists> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(
                             '${index + 1}.',
@@ -309,7 +312,7 @@ class _StarListsState extends State<StarLists> {
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            flex: 4,
+                            flex: 5,
                             child: Text(
                               tGroup['name'],
                               style: const TextStyle(
@@ -317,9 +320,9 @@ class _StarListsState extends State<StarLists> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 5.0),
+                          // const SizedBox(width: 5.0),
                           Expanded(
-                            flex: 5,
+                            flex: 8,
                             child: Text(
                               DateFormat('yyyy-MM-dd/ hh:mm a')
                                   .format(DateTime.parse(tGroup['created_at'])),
@@ -353,7 +356,7 @@ class _StarListsState extends State<StarLists> {
                             ),
                           ),
                           Expanded(
-                            flex: 1,
+                            flex: 3,
                             child: IconButton(
                               onPressed: () {},
                               icon: const Icon(
@@ -400,6 +403,7 @@ class _StarListsState extends State<StarLists> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(
                             '${index + 1}.',
@@ -409,7 +413,7 @@ class _StarListsState extends State<StarLists> {
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            flex: 4,
+                            flex: 5,
                             child: Text(
                               tGroupThread['name'],
                               style: const TextStyle(
@@ -417,9 +421,9 @@ class _StarListsState extends State<StarLists> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 5.0),
+                          // const SizedBox(width: 5.0),
                           Expanded(
-                            flex: 5,
+                            flex: 8,
                             child: Text(
                               DateFormat('yyyy-MM-dd/ hh:mm a').format(
                                   DateTime.parse(tGroupThread['created_at'])),
@@ -453,6 +457,7 @@ class _StarListsState extends State<StarLists> {
                             ),
                           ),
                           Expanded(
+                            flex: 3,
                             child: IconButton(
                               onPressed: () {},
                               icon: const Icon(

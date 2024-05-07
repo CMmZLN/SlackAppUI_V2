@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Team2SlackApp/pages/leftpannels/leftpannel.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/layouts/appbar.dart';
 import 'package:Team2SlackApp/pages/share_pref_utils.dart';
@@ -67,6 +68,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MyAppBarWidget(),
+      drawer:const Leftpannel(),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -78,7 +80,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   padding: EdgeInsets.only(top: 20.0, bottom: 30.0),
                   child: Center(
                     child: Text(
-                      'パスワードを変更',
+                      'パスワード更新',
                       style: TextStyle(fontSize: 30),
                     ),
                   ),
@@ -162,17 +164,16 @@ class _ChangePasswordState extends State<ChangePassword> {
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric( vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Center(
                     child: SizedBox(
                       width: 100,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(126, 22, 139, 14),
-                          shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5))
-                        ),
+                            backgroundColor:
+                                const Color.fromARGB(126, 22, 139, 14),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5))),
                         onPressed: () async {
                           await changepassword(
                               passwordController.text, confirmController.text);
@@ -180,7 +181,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             setState(() {
                               _isTextBoxVisible = false;
                             });
-                    
+
                             showSuccessDialog(context);
                           } else {
                             setState(() {
@@ -214,9 +215,8 @@ void showSuccessDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('Change Password Success'),
-        content: const Text(
-            'Congratulations! Your password changing is successful.'),
+        insetPadding: const EdgeInsets.all(20),
+        content: const Text('おめでとう！ パスワードの変更が成功しました。'),
         actions: [
           TextButton(
             onPressed: () {
@@ -230,7 +230,13 @@ void showSuccessDialog(BuildContext context) {
                           )),
                   (route) => false);
             },
-            child: const Text('OK'),
+            child: const Text(
+              'はい',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(126, 22, 139, 14)),
+            ),
           ),
         ],
       );

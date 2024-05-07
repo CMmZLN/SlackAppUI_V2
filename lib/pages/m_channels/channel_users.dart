@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Team2SlackApp/pages/layouts/appbar.dart';
@@ -127,6 +128,12 @@ class _ChannelUsersState extends State<ChannelUsers> {
                   left: 20, right: 20, top: 20, bottom: 0),
               child: Row(
                 children: [
+                  IconButton(
+                      padding: const EdgeInsets.only(left: 0, right: 10),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.arrow_back_ios_rounded)),
                   Text(widget.channelData["channel_name"],
                       style: const TextStyle(
                           fontSize: 20.0, fontWeight: FontWeight.bold)),
@@ -143,6 +150,8 @@ class _ChannelUsersState extends State<ChannelUsers> {
                     Expanded(
                       child: DropdownButtonFormField(
                         decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 15.0, horizontal: 10.0),
                             focusedBorder: OutlineInputBorder(
                               borderSide:
                                   BorderSide(color: Colors.black, width: 2),
@@ -171,7 +180,9 @@ class _ChannelUsersState extends State<ChannelUsers> {
                   if (mChannelsIds.contains(sChannelId))
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(126, 22, 139, 14),
+                          minimumSize: const Size(50,50),
+                          backgroundColor:
+                              const Color.fromARGB(126, 22, 139, 14),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5))),
                       onPressed: () async {
@@ -246,19 +257,28 @@ class _ChannelUsersState extends State<ChannelUsers> {
                         onPressed: () async {
                           await removeChannelUser(
                               sChannelId, cUsers[index]["id"]);
-                          if (status == true) {
+                          if (status == true &&
+                              cUsers[index]["id"] != user_id) {
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ChannelUsers(
                                         channelData: widget.channelData)),
                                 (route) => false);
+                          } else {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const MyHomePage(title: "SlackApp")),
+                                (route) => false);
                           }
                         },
                         child: const Text(
-                          "消去",
-                          style:
-                              TextStyle(color: Color.fromARGB(255, 27, 5, 228)),
+                          "解除",
+                          style: TextStyle(
+                              color: Color.fromARGB(126, 22, 139, 14),
+                              fontWeight: FontWeight.bold),
                         )),
                   )
               ],

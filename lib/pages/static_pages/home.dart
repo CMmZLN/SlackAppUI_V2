@@ -25,6 +25,24 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     fetchData();
+    refresh();
+  }
+
+  Future<void> refresh() async {
+    token = await SharedPrefUtils.getStr("token");
+    user_id = await SharedPrefUtils.getInt("userid");
+    final response = await http.get(
+      Uri.parse("https://slackapi-team2.onrender.com/refresh?user_id=$user_id"),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    if (response.statusCode == 200) {
+      print("Changed");
+    } else {
+      print("Not yet");
+    }
   }
 
   Future<void> fetchData() async {
@@ -51,33 +69,39 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const MyAppBarWidget(),
+    return const Scaffold(
+      appBar: MyAppBarWidget(),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.only(top: 20.0),
+          padding: EdgeInsets.only(top: 20.0),
           child: Column(
             children: [
-              const Text(
-                'ホーム',
-                style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 200.0,
+              SizedBox(
+                  width: 300,
+                  height: 280,
+                  child: Image(image: AssetImage("assets/background.png"))),
+              SizedBox(
+                height: 100.0,
               ),
               Text(
-                'Hi! $userName',
-                style: const TextStyle(fontSize: 25),
+                'ようこそ!',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
-              const Text(
-                '友達と楽しくメッセージを送りましょう。',
-                style: TextStyle(fontSize: 25),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                '友達と楽しくメッセージ\n     を送りましょう。',
+                style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(126, 22, 139, 14)),
               ),
             ],
           ),
         ),
       ),
-      drawer: const Leftpannel(),
+      drawer: Leftpannel(),
     );
   }
 }

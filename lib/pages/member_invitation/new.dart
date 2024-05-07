@@ -188,7 +188,7 @@ class _MemberInviteState extends State<MemberInvite> {
               ),
             ),
             const SizedBox(
-              height: 30,
+              height: 20,
             ),
             const Text(
               'メール',
@@ -204,6 +204,7 @@ class _MemberInviteState extends State<MemberInvite> {
               child: TextFormField(
                 controller: emailController,
                 decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5)),
                 ),
@@ -215,7 +216,7 @@ class _MemberInviteState extends State<MemberInvite> {
             Center(
               child: SizedBox(
                 width: 100,
-                height: 55,
+                height: 45,
                 child: TextButton(
                   onPressed: () async {
                     await _postMemberData(

@@ -142,9 +142,9 @@ class _MentionListsState extends State<MentionLists> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   const SizedBox(width: 25),
-                                  Expanded(
+                                  const Expanded(
                                     flex: 1,
-                                    child: const Text(
+                                    child: Text(
                                       '--> ',
                                       style: TextStyle(
                                         fontSize: 18,
@@ -208,7 +208,7 @@ class _MentionListsState extends State<MentionLists> {
                   const Text(
                     'グループスレッドメンションリスト',
                     style: TextStyle(
-                      letterSpacing: 1,
+                      letterSpacing: 0,
                       fontSize: 23,
                       color: Color.fromARGB(126, 22, 139, 14),
                     ),
@@ -270,9 +270,9 @@ class _MentionListsState extends State<MentionLists> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   const SizedBox(width: 25),
-                                  Expanded(
+                                  const Expanded(
                                     flex: 1,
-                                    child: const Text(
+                                    child: Text(
                                       '--> ',
                                       style: TextStyle(
                                         fontSize: 18,

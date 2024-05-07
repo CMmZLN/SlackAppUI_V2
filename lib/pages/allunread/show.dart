@@ -16,10 +16,15 @@ class _AllUnreadState extends State<AllUnread> {
   dynamic t_direct_messages = [];
   dynamic t_direct_threads = [];
   dynamic t_user_channelids = [];
+  dynamic t_user_threadids = [];
   dynamic t_group_messages = [];
+  dynamic t_group_threads = [];
+  dynamic channelIds = [];
+
   String? token = "";
   int? user_id;
-  int number = 1;
+  // int numberForGroup = 1;
+  // int numberForGroupThread = 1;
 
   @override
   void initState() {
@@ -40,13 +45,18 @@ class _AllUnreadState extends State<AllUnread> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
+      print(response.statusCode);
       if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("All Unread Message Data");
+        print("All Unread data $data");
         setState(() {
-          final data = jsonDecode(response.body);
           t_direct_messages = data['t_direct_messages'];
           t_direct_threads = data['t_direct_threads'];
           t_user_channelids = data['t_user_channelids'];
+          t_user_threadids = data["t_user_threadids"];
           t_group_messages = data['t_group_messages'];
+          t_group_threads = data['t_group_threads'];
         });
       } else {
         throw Exception("Failed to load data");
@@ -56,6 +66,8 @@ class _AllUnreadState extends State<AllUnread> {
 
   @override
   Widget build(BuildContext context) {
+    int numberForGroupThread = 1;
+    int numberForGroup = 1;
     return Scaffold(
       appBar: const MyAppBarWidget(),
       body: CustomScrollView(
@@ -68,10 +80,7 @@ class _AllUnreadState extends State<AllUnread> {
                 Center(
                   child: Text(
                     '未読リスト',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold
-                    ),
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(height: 25),
@@ -236,6 +245,8 @@ class _AllUnreadState extends State<AllUnread> {
               childCount: t_direct_threads.length,
             ),
           ),
+
+          //Group Unread Messages
           const SliverToBoxAdapter(
             child: Divider(thickness: 1, color: Colors.grey),
           ),
@@ -258,6 +269,107 @@ class _AllUnreadState extends State<AllUnread> {
                 final tGroup = t_group_messages[index];
                 for (var tUserChannelId in t_user_channelids) {
                   if (int.parse(tUserChannelId) == tGroup["id"]) {
+                    return Column(
+                      children: [
+                       
+                          
+                        Container(
+                          margin: const EdgeInsets.all(8.0),
+                          color: const Color.fromARGB(226, 233, 238, 239),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                            tGroup["channel_name"],
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                              Row(
+                                children: [
+                                  Text(
+                                    '${numberForGroup++}',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    tGroup['name'],
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8.0),
+                                  Text(
+                                    DateFormat('yyyy-MM-dd/ hh:mm a').format(
+                                        DateTime.parse(tGroup['created_at'])),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 7),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 25),
+                                  const Expanded(
+                                    child: Text(
+                                      '--> ',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 10,
+                                    child: Text(
+                                      tGroup['groupmsg'],
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                }
+               
+                return Container();
+              },
+              childCount: t_group_messages.length,
+            ),
+          ),
+
+          //Group Thread Unread Messages
+          const SliverToBoxAdapter(
+            child: Divider(thickness: 1, color: Colors.grey),
+          ),
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 25),
+          ),
+          const SliverToBoxAdapter(
+            child: Text(
+              'グループスレッドの未読メッセージ',
+              style: TextStyle(
+                fontSize: 23,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(126, 22, 139, 14),
+              ),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                final tGroupThread = t_group_threads[index];
+                for (var tUserThreadId in t_user_threadids) {
+                  if (int.parse(tUserThreadId) == tGroupThread["id"]) {
                     return Container(
                       margin: const EdgeInsets.all(8.0),
                       color: const Color.fromARGB(226, 233, 238, 239),
@@ -268,14 +380,14 @@ class _AllUnreadState extends State<AllUnread> {
                           Row(
                             children: [
                               Text(
-                                '${number++}',
+                                '${numberForGroupThread++}',
                                 style: const TextStyle(
                                   fontSize: 18,
                                 ),
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                tGroup['name'],
+                                tGroupThread['name'],
                                 style: const TextStyle(
                                   fontSize: 18,
                                 ),
@@ -283,7 +395,7 @@ class _AllUnreadState extends State<AllUnread> {
                               const SizedBox(width: 8.0),
                               Text(
                                 DateFormat('yyyy-MM-dd/ hh:mm a').format(
-                                    DateTime.parse(tGroup['created_at'])),
+                                    DateTime.parse(tGroupThread['created_at'])),
                                 style: const TextStyle(
                                   fontSize: 18,
                                 ),
@@ -305,7 +417,7 @@ class _AllUnreadState extends State<AllUnread> {
                               Expanded(
                                 flex: 10,
                                 child: Text(
-                                  tGroup['groupmsg'],
+                                  tGroupThread['groupthreadmsg'],
                                   style: const TextStyle(
                                     fontSize: 18,
                                   ),
@@ -320,7 +432,7 @@ class _AllUnreadState extends State<AllUnread> {
                 }
                 return Container();
               },
-              childCount: t_group_messages.length,
+              childCount: t_group_threads.length,
             ),
           ),
         ],

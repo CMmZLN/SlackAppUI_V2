@@ -119,17 +119,17 @@ class _UserManageState extends State<UserManage> {
               Text(
                 'ユーザ名とメールアドレス',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(
-                width: 50,
+                width: 70,
               ),
               Text(
                 'セットアップ',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -169,7 +169,7 @@ class _UserManageState extends State<UserManage> {
                                           ],
                                         ),
                                       ),
-                                      const SizedBox(width: 60),
+                                      const SizedBox(width: 40),
                                       Column(
                                         children: [
                                           TextButton(
@@ -177,6 +177,8 @@ class _UserManageState extends State<UserManage> {
                                             child: const Text(
                                               '-',
                                               style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    126, 22, 139, 14),
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 25,
                                               ),
@@ -244,7 +246,7 @@ class _UserManageState extends State<UserManage> {
                                           ],
                                         ),
                                       ),
-                                      const SizedBox(width: 60),
+                                      const SizedBox(width: 40),
                                       Column(
                                         children: [
                                           TextButton(
@@ -264,13 +266,10 @@ class _UserManageState extends State<UserManage> {
                                             child: const Text(
                                               '解除',
                                               style: TextStyle(
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                decorationThickness: 2,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color.fromARGB(126, 22, 139, 14)
-                                              ),
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromARGB(
+                                                      126, 22, 139, 14)),
                                             ),
                                           ),
                                         ],
@@ -356,13 +355,13 @@ class _UserManageState extends State<UserManage> {
                                             child: const Text(
                                               '有効',
                                               style: TextStyle(
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                decorationThickness: 2,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color.fromARGB(126, 22, 139, 14)
-                                              ),
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  decorationThickness: 2,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromARGB(
+                                                      126, 22, 139, 14)),
                                             ),
                                           ),
                                         ],

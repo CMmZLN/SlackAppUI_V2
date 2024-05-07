@@ -60,11 +60,22 @@ class _EditChannelState extends State<EditChannel> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Text(
-                  "チャンネル編集",
-                  style: TextStyle(fontSize: 30.0),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  
+                  children: [
+                    IconButton(
+                      padding: const EdgeInsets.only(left:0, right: 50),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.arrow_back_ios_rounded)),
+                    const Text(
+                      "チャンネル更新",
+                      style: TextStyle(fontSize: 30.0),
+                    ),
+                  ],
                 ),
               ),
               Padding(
@@ -80,7 +91,11 @@ class _EditChannelState extends State<EditChannel> {
                         });
                       },
                     ),
-                    const Text('パブリック', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                    const Text(
+                      'パブリック',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
                     const SizedBox(
                         width: 20), // Add spacing between the radio buttons
                     Radio(
@@ -92,7 +107,11 @@ class _EditChannelState extends State<EditChannel> {
                         });
                       },
                     ),
-                    const Text('プライベート', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                    const Text(
+                      'プライベート',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
               ),
@@ -100,7 +119,7 @@ class _EditChannelState extends State<EditChannel> {
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                     validator: (String? value) {
-                      return value!.isEmpty ? '無効なチャネル名' : null;
+                      return value!.isEmpty ? 'チャネル名を入力してください。' : null;
                     },
                     controller: channelNameController,
                     decoration: InputDecoration(
@@ -127,7 +146,7 @@ class _EditChannelState extends State<EditChannel> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(126, 22, 139, 14),
+                      backgroundColor: const Color.fromARGB(126, 22, 139, 14),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5))),
                   child: const Text(

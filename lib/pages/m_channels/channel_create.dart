@@ -67,7 +67,7 @@ class _ChannelCreateState extends State<ChannelCreate> {
                 padding: EdgeInsets.all(20.0),
                 child: Text(
                   "チャンネル作成",
-                  style: TextStyle(fontSize: 30.0,fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
                 ),
               ),
               Padding(
@@ -83,7 +83,11 @@ class _ChannelCreateState extends State<ChannelCreate> {
                         });
                       },
                     ),
-                    const Text('パブリック', style: TextStyle(fontSize:20,fontWeight: FontWeight.bold ),),
+                    const Text(
+                      'パブリック',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(
                         width: 20), // Add spacing between the radio buttons
                     Radio(
@@ -95,7 +99,11 @@ class _ChannelCreateState extends State<ChannelCreate> {
                         });
                       },
                     ),
-                    const Text('プライベート', style: TextStyle(fontSize:20,fontWeight: FontWeight.bold ),),
+                    const Text(
+                      'プライベート',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
               ),
@@ -103,15 +111,14 @@ class _ChannelCreateState extends State<ChannelCreate> {
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                     validator: (String? value) {
-                      return value!.isEmpty ? '無効なチャネル名' : null;
+                      return value!.isEmpty ? 'チャネル名を入力してください。' : null;
                     },
                     controller: channelNameController,
                     decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      labelText: 'チャンネル名',
-                      labelStyle: const TextStyle(fontSize: 18)
-                    )),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        labelText: 'チャンネル名称',
+                        labelStyle: const TextStyle(fontSize: 18))),
               ),
               const SizedBox(height: 10.0),
               SizedBox(
@@ -123,7 +130,7 @@ class _ChannelCreateState extends State<ChannelCreate> {
                           createChannel(
                               channelNameController.text, channel_status!);
                         });
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const MyHomePage(
@@ -132,12 +139,17 @@ class _ChannelCreateState extends State<ChannelCreate> {
                         );
                       }
                     },
-                    style: TextButton.styleFrom(backgroundColor: const Color.fromARGB(126, 22, 139, 14),shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                    style: TextButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(126, 22, 139, 14),
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5)))),
                     child: const Text(
-                      
                       "作成",
-                      style: TextStyle(fontSize: 20.0, color: Colors.white,fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     )),
               )
             ],

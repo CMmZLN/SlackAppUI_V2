@@ -68,16 +68,12 @@ class _workspacenewState extends State<workspacenew> {
         title: const Text(
           "スラックアプリ",
           style: TextStyle(
-            color: Colors.white,
-            fontSize: 30,
-            fontWeight: FontWeight.bold
-          ),
+              color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(126, 22, 139, 14),
       ),
       body: Container(
-        
         margin: const EdgeInsets.only(
           top: 40,
         ),
@@ -137,6 +133,7 @@ class _workspacenewState extends State<workspacenew> {
                           child: Text(
                             error[index], // Display current error message
                             style: const TextStyle(
+                              letterSpacing: 1,
                                 color: Colors.red), // Text color
                           ),
                         ),
@@ -292,11 +289,13 @@ class _workspacenewState extends State<workspacenew> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(126, 22, 139, 14),
-                    shape: 
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0))
+                      backgroundColor: const Color.fromARGB(126, 22, 139, 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0))),
+                  child: const Text(
+                    'アカウントを作る',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
-                  child: const Text('アカウントを作る' , style: TextStyle(fontSize: 20,color: Colors.white),),
                 ),
               ),
             ],
@@ -312,8 +311,8 @@ void showSuccessDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('サインアップ成功'),
-        content: const Text('おめでとう！サインアップは成功しました。'),
+        insetPadding: const EdgeInsets.all(15),
+        content: const Text('おめでとう！サインアップは成功しました。',style: TextStyle(fontWeight: FontWeight.bold),),
         actions: [
           TextButton(
             onPressed: () {
@@ -324,7 +323,10 @@ void showSuccessDialog(BuildContext context) {
                   MaterialPageRoute(builder: (context) => const Welcome()),
                   (route) => false);
             },
-            child: const Text('OK'),
+            child: const Text(
+              'はい',
+              style: TextStyle(color: Color.fromARGB(126, 22, 139, 14),fontSize: 18),
+            ),
           ),
         ],
       );

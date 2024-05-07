@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:Team2SlackApp/pages/m_channels/show_channel.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/change_password/new.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 import "package:http/http.dart" as http;
 import 'package:Team2SlackApp/pages/static_pages/welcome.dart';
-
 
 class MyAppBarWidget extends StatefulWidget implements PreferredSizeWidget {
   const MyAppBarWidget({super.key});
@@ -23,7 +23,6 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
   String? token = "";
   int? workspace_id;
   int? user_id;
-
 
   Future<void> fetchData() async {
     token = await SharedPrefUtils.getStr("token");
@@ -62,7 +61,7 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
         .delete(Uri.parse("https://slackapi-team2.onrender.com/logout"));
     if (response.statusCode == 200) {
       setState(() {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const Welcome()),
         );
@@ -74,7 +73,6 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
 
   @override
   Widget build(BuildContext context) {
-     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return AppBar(
       title: const Text(
         "スラックアプリ",
@@ -87,7 +85,7 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
         IconButton(
           icon: const Icon(Icons.home),
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (context) => const MyHomePage(
@@ -98,7 +96,7 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
         IconButton(
           icon: const Icon(Icons.lock),
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => ChangePassword(
@@ -110,6 +108,7 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
         IconButton(
           icon: const Icon(Icons.logout),
           onPressed: () {
+            timer?.cancel();
             _Logout(user_id!);
           },
         ),
