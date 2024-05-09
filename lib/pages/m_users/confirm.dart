@@ -115,18 +115,18 @@ class _MemberConfirmState extends State<MemberConfirm> {
                   ),
                 ),
               ),
-              const SizedBox(height: 40.0),
-              Visibility(
-                visible: _isTextBoxVisible,
-                child: Container(
-                  color: const Color.fromARGB(
-                      255, 208, 104, 138), // Background color
-                  padding: const EdgeInsets.all(8.0), // Padding around the text
-                  child: Text(
-                    'フォームには ${error.length.toString()} 以下が含まれています。',
-                  ),
-                ),
-              ),
+              const SizedBox(height: 20.0),
+              // Visibility(
+              //   visible: _isTextBoxVisible,
+              //   child: Container(
+              //     color: const Color.fromARGB(
+              //         255, 208, 104, 138), // Background color
+              //     padding: const EdgeInsets.all(8.0), // Padding around the text
+              //     child: Text(
+              //       'フォームには ${error.length.toString()} 以下が含まれています。',
+              //     ),
+              //   ),
+              // ),
               Visibility(
                 visible: _isTextBoxVisible,
                 child: ListView.builder(
@@ -163,6 +163,9 @@ class _MemberConfirmState extends State<MemberConfirm> {
                     );
                   },
                 ),
+              ),
+              const SizedBox(
+                height: 10,
               ),
               const Text(
                 // 'Workspaces Name',
@@ -332,8 +335,11 @@ void showSuccessDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('サインアップ成功'),
-        content: const Text('おめでとう！サインアップは成功しました。'),
+        insetPadding: const EdgeInsets.all(15),
+        content: const Text(
+          'おめでとう！サインアップは成功しました。',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           TextButton(
             onPressed: () {
@@ -344,7 +350,11 @@ void showSuccessDialog(BuildContext context) {
                   MaterialPageRoute(builder: (context) => const Welcome()),
                   (route) => false);
             },
-            child: const Text('OK'),
+            child: const Text(
+              'はい',
+              style: TextStyle(
+                  color: Color.fromARGB(126, 22, 139, 14), fontSize: 18),
+            ),
           ),
         ],
       );

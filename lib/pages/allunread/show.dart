@@ -51,12 +51,18 @@ class _AllUnreadState extends State<AllUnread> {
         print("All Unread Message Data");
         print("All Unread data $data");
         setState(() {
+          print('Hello...');
           t_direct_messages = data['t_direct_messages'];
           t_direct_threads = data['t_direct_threads'];
           t_user_channelids = data['t_user_channelids'];
-          t_user_threadids = data["t_user_threadids"];
+          t_user_threadids = data["t_user_channelthreadids"];
           t_group_messages = data['t_group_messages'];
+          print('hello/////');
           t_group_threads = data['t_group_threads'];
+          print('t_group_threads');
+          print(t_group_threads);
+          print('t_user_threadids');
+          print(t_user_threadids);
         });
       } else {
         throw Exception("Failed to load data");
@@ -271,8 +277,6 @@ class _AllUnreadState extends State<AllUnread> {
                   if (int.parse(tUserChannelId) == tGroup["id"]) {
                     return Column(
                       children: [
-                       
-                          
                         Container(
                           margin: const EdgeInsets.all(8.0),
                           color: const Color.fromARGB(226, 233, 238, 239),
@@ -281,10 +285,10 @@ class _AllUnreadState extends State<AllUnread> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                            tGroup["channel_name"],
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
+                                tGroup["channel_name"],
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
                               Row(
                                 children: [
                                   Text(
@@ -340,7 +344,7 @@ class _AllUnreadState extends State<AllUnread> {
                     );
                   }
                 }
-               
+
                 return Container();
               },
               childCount: t_group_messages.length,
@@ -356,7 +360,7 @@ class _AllUnreadState extends State<AllUnread> {
           ),
           const SliverToBoxAdapter(
             child: Text(
-              'グループスレッドの未読メッセージ',
+              'グループ未読スレッド',
               style: TextStyle(
                 fontSize: 23,
                 fontWeight: FontWeight.bold,

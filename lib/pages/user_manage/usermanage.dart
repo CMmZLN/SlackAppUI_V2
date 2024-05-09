@@ -355,9 +355,6 @@ class _UserManageState extends State<UserManage> {
                                             child: const Text(
                                               '有効',
                                               style: TextStyle(
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                  decorationThickness: 2,
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                   color: Color.fromARGB(

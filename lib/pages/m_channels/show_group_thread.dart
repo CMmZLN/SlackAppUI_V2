@@ -191,10 +191,10 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(tGroupMessageId.toString(),
-                          style: const TextStyle(fontSize: 20.0)),
+                      const Text("1",
+                          style:  TextStyle(fontSize: 20.0)),
                       const SizedBox(
-                        width: 5,
+                        width: 7,
                       ),
                       Expanded(
                         flex: 5,
@@ -211,23 +211,22 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                 ),
                 Container(
                   padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.arrow_forward),
-                      const SizedBox(width: 20.0),
-                      Expanded(
-                        child: SizedBox(
-                          height: 80,
+                  child: SizedBox(
+                    height: 80,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.arrow_forward),
+                        const SizedBox(width: 20.0),
+                        Expanded(
                           child: SingleChildScrollView(
                             child: Text(tGroupMessage,
                                 style: const TextStyle(fontSize: 20.0)),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 10.0),
                 const Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 0, 20),
                   child: Divider(
@@ -244,13 +243,13 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                           fontSize: 30.0,
                           color: Color.fromARGB(126, 22, 139, 14))),
                 ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 0, 20),
-                  child: Divider(
-                    color: Colors.grey,
-                    thickness: 1.0,
-                  ),
-                ),
+                // const Padding(
+                //   padding: EdgeInsets.fromLTRB(20, 0, 0, 20),
+                //   child: Divider(
+                //     color: Colors.grey,
+                //     thickness: 1.0,
+                //   ),
+                // ),
                 Expanded(
                   child: ListView.builder(
                     controller: threadScroller,
@@ -270,7 +269,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                                   style: const TextStyle(fontSize: 20.0),
                                 ),
                                 const SizedBox(
-                                  width: 5,
+                                  width: 8,
                                 ),
                                 Expanded(
                                   flex: 5,

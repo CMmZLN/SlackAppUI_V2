@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Team2SlackApp/pages/m_channels/show_channel.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -131,7 +132,12 @@ class _ChannelUsersState extends State<ChannelUsers> {
                   IconButton(
                       padding: const EdgeInsets.only(left: 0, right: 10),
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ShowChannel(
+                                        channelData: widget.channelData)),
+                                (route) => false);
                       },
                       icon: const Icon(Icons.arrow_back_ios_rounded)),
                   Text(widget.channelData["channel_name"],

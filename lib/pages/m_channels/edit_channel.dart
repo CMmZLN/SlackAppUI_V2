@@ -8,9 +8,11 @@ import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
 
 class EditChannel extends StatefulWidget {
-  EditChannel({super.key, required this.channelData});
+  EditChannel(
+      {super.key, required this.channelData, required this.channelName});
 
   dynamic channelData;
+  String channelName;
 
   @override
   State<EditChannel> createState() => _EditChannelState();
@@ -18,7 +20,7 @@ class EditChannel extends StatefulWidget {
 
 class _EditChannelState extends State<EditChannel> {
   late TextEditingController channelNameController =
-      TextEditingController(text: widget.channelData["channel_name"]);
+      TextEditingController(text: widget.channelName);
   int? channel_status;
   final _formKey = GlobalKey<FormState>();
   String? token;
@@ -63,10 +65,9 @@ class _EditChannelState extends State<EditChannel> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Row(
-                  
                   children: [
                     IconButton(
-                      padding: const EdgeInsets.only(left:0, right: 50),
+                        padding: const EdgeInsets.only(left: 0, right: 50),
                         onPressed: () {
                           Navigator.pop(context);
                         },

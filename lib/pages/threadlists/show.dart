@@ -76,10 +76,7 @@ class _ThreadState extends State<Thread> {
             const Center(
               child: Text(
                 'スレッドリスト',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold
-                ),
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 20),
@@ -186,7 +183,8 @@ class _ThreadState extends State<Thread> {
                                         icon: const Icon(
                                           Icons.star,
                                           size: 25,
-                                          color: Color.fromARGB(126, 22, 139, 14),
+                                          color:
+                                              Color.fromARGB(126, 22, 139, 14),
                                         ),
                                       ),
                                     ),
@@ -199,7 +197,8 @@ class _ThreadState extends State<Thread> {
                                         icon: const Icon(
                                           Icons.star_border_outlined,
                                           size: 25,
-                                          color: Color.fromARGB(126, 22, 139, 14),
+                                          color:
+                                              Color.fromARGB(126, 22, 139, 14),
                                         ),
                                       ),
                                     ),
@@ -215,15 +214,18 @@ class _ThreadState extends State<Thread> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 22,
-                              color:  Color.fromARGB(126, 22, 139, 14),
+                              color: Color.fromARGB(126, 22, 139, 14),
                             ),
                           ),
                           Column(
                             children: List.generate(t_direct_threads.length,
                                 (indexThread) {
                               final tThread = t_direct_threads[indexThread];
+                              print("Share Pref User Id ------------$user_id");
+                              print(tThread);
                               if (tDirect['id'] ==
-                                  tThread['t_direct_message_id']) {
+                                      tThread['t_direct_message_id'] &&
+                                  user_id == tThread["m_user_id"]) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -292,7 +294,8 @@ class _ThreadState extends State<Thread> {
                                               icon: const Icon(
                                                 Icons.star,
                                                 size: 25,
-                                                color: Color.fromARGB(126, 22, 139, 14),
+                                                color: Color.fromARGB(
+                                                    126, 22, 139, 14),
                                               ),
                                             ),
                                           ),
@@ -305,7 +308,8 @@ class _ThreadState extends State<Thread> {
                                               icon: const Icon(
                                                 Icons.star_border_outlined,
                                                 size: 25,
-                                                color: Color.fromARGB(126, 22, 139, 14),
+                                                color: Color.fromARGB(
+                                                    126, 22, 139, 14),
                                               ),
                                             ),
                                           ),
@@ -438,7 +442,7 @@ class _ThreadState extends State<Thread> {
                                     icon: const Icon(
                                       Icons.star_border_outlined,
                                       size: 25,
-                                      color:  Color.fromARGB(126, 22, 139, 14),
+                                      color: Color.fromARGB(126, 22, 139, 14),
                                     ),
                                   ),
                                 ),
@@ -452,7 +456,7 @@ class _ThreadState extends State<Thread> {
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color:  Color.fromARGB(126, 22, 139, 14),
+                              color: Color.fromARGB(126, 22, 139, 14),
                             ),
                           ),
                           const SizedBox(
@@ -463,7 +467,9 @@ class _ThreadState extends State<Thread> {
                                 List.generate(t_group_threads.length, (index) {
                               final tGroupThread = t_group_threads[index];
                               if (tGroup['id'] ==
-                                  tGroupThread['t_group_message_id']) {
+                                  tGroupThread['t_group_message_id'] &&
+                                  user_id == tGroupThread["m_user_id"]
+                                  ) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -531,7 +537,8 @@ class _ThreadState extends State<Thread> {
                                               icon: const Icon(
                                                 Icons.star,
                                                 size: 25,
-                                                color: Color.fromARGB(126, 22, 139, 14),
+                                                color: Color.fromARGB(
+                                                    126, 22, 139, 14),
                                               ),
                                             ),
                                           ),
@@ -544,7 +551,8 @@ class _ThreadState extends State<Thread> {
                                               icon: const Icon(
                                                 Icons.star_border_outlined,
                                                 size: 25,
-                                                color: Color.fromARGB(126, 22, 139, 14),
+                                                color: Color.fromARGB(
+                                                    126, 22, 139, 14),
                                               ),
                                             ),
                                           ),

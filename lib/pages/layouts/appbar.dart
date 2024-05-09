@@ -56,9 +56,9 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
   Future<void> _Logout(int id) async {
     await SharedPrefUtils.remove("token");
     await SharedPrefUtils.remove("workspaceid");
-    await SharedPrefUtils.remove("userid");
-    final response = await http
-        .delete(Uri.parse("https://slackapi-team2.onrender.com/logout"));
+    user_id = await SharedPrefUtils.getInt("userid");
+    final response = await http.delete(Uri.parse(
+        "https://slackapi-team2.onrender.com/logout?user_id=$user_id"));
     if (response.statusCode == 200) {
       setState(() {
         Navigator.pushReplacement(
@@ -69,6 +69,7 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
     } else {
       throw Exception('Failed to Logout');
     }
+    await SharedPrefUtils.remove("userid");
   }
 
   @override
@@ -108,7 +109,8 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
         IconButton(
           icon: const Icon(Icons.logout),
           onPressed: () {
-            timer?.cancel();
+            // timer?.cancel();
+            
             _Logout(user_id!);
           },
         ),

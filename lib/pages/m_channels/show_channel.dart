@@ -16,7 +16,10 @@ import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
 
 bool status = false;
-Timer? timer;
+
+
+GlobalKey<FlutterMentionsState> keyForFlutterMention =
+    GlobalKey<FlutterMentionsState>();
 
 class ShowChannel extends StatefulWidget {
   ShowChannel({super.key, required this.channelData});
@@ -39,6 +42,7 @@ class _ShowChannelState extends State<ShowChannel> {
   dynamic channelData = [];
   dynamic channelUsersLists = [];
 
+  String channelName = "";
   int? mUserId;
   int? user_id;
   int? workspace_id;
@@ -46,7 +50,7 @@ class _ShowChannelState extends State<ShowChannel> {
   dynamic mChannelIds = [];
   bool isLoading = true;
   bool isScroll = true;
-
+  Timer? timer;
   Future<void> fetchData() async {
     print("timer fetchData");
     token = await SharedPrefUtils.getStr("token");
@@ -95,6 +99,7 @@ class _ShowChannelState extends State<ShowChannel> {
         tGroupMessage = data["retrieveGroupMessage"]["t_group_messages"];
         channelId = data["retrieveGroupMessage"]["s_channel"]["id"];
         channelData = data["retrieveGroupMessage"]["s_channel"];
+        channelName = data["retrieveGroupMessage"]["s_channel"]["channel_name"];
         tGroupStarMsgids = data["retrieveGroupMessage"]["t_group_star_msgids"];
         channelUsersLists = data["retrieveGroupMessage"]["m_channel_users"];
       });
@@ -122,10 +127,13 @@ class _ShowChannelState extends State<ShowChannel> {
     });
   }
 
+  
+
   @override
   void dispose() {
     print("Dispose Channel");
     timer?.cancel();
+   
     super.dispose();
   }
 
@@ -293,27 +301,28 @@ class _ShowChannelState extends State<ShowChannel> {
                                           icon: const Icon(Icons.star_outline),
                                           color: const Color.fromARGB(
                                               126, 22, 139, 14)),
-                                  if(user_id == tGroupMessage[index]["m_user_id"])         
-                                    IconButton(
-                                      onPressed: () async {
-                                        await deleteGroupMessage(
-                                            tGroupMessage[index]["id"],
-                                            channelData["id"]);
-                                        // if (status == true) {
-                                        //   Navigator.pushAndRemoveUntil(
-                                        //       context,
-                                        //       MaterialPageRoute(
-                                        //           builder: (context) =>
-                                        //               ShowChannel(
-                                        //                   channelData:
-                                        //                       channelData)),
-                                        //       (route) => false);
-                                        // }
-                                      },
-                                      icon: const Icon(Icons.delete_outline),
-                                      color: const Color.fromARGB(
-                                          126, 22, 139, 14),
-                                    )
+                                    if (user_id ==
+                                        tGroupMessage[index]["m_user_id"])
+                                      IconButton(
+                                        onPressed: () async {
+                                          await deleteGroupMessage(
+                                              tGroupMessage[index]["id"],
+                                              channelData["id"]);
+                                          // if (status == true) {
+                                          //   Navigator.pushAndRemoveUntil(
+                                          //       context,
+                                          //       MaterialPageRoute(
+                                          //           builder: (context) =>
+                                          //               ShowChannel(
+                                          //                   channelData:
+                                          //                       channelData)),
+                                          //       (route) => false);
+                                          // }
+                                        },
+                                        icon: const Icon(Icons.delete_outline),
+                                        color: const Color.fromARGB(
+                                            126, 22, 139, 14),
+                                      )
                                   ],
                                 ),
                               ),
@@ -363,174 +372,184 @@ class _ShowChannelState extends State<ShowChannel> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const MyAppBarWidget(),
-      drawer: const Leftpannel(),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: Colors.blue,
-              ),
-            )
-          : Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(widget.channelData["channel_name"],
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                      const SizedBox(width: 10.0),
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ChannelUsers(channelData: channelData)),
-                          );
-                        },
-                        icon: const Icon(Icons.people, color: Colors.black),
-                        label: Text(userCount.toString(),
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 20.0)),
-                      ),
-                      const SizedBox(width: 10.0),
-                      Row(
-                        children: [
-                          if (mChannelIds.contains(channelId))
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => EditChannel(
-                                          channelData: widget.channelData)),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  // Set the background color to gray
-                                  elevation: 0,
-                                  shadowColor: Colors.transparent),
-                              child: const Row(
-                                children: [
-                                  Icon(Icons.edit,
-                                      color: Colors.black), // Edit icon
-                                  SizedBox(
-                                      width:
-                                          8), // Add spacing between icon and text
-                                  // Button text
-                                ],
-                              ),
-                            ),
-                          if (mChannelIds.contains(channelId))
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  shadowColor: Colors.transparent),
-                              onPressed: () => showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                  insetPadding: const EdgeInsets.all(10),
-                                  title: SizedBox(
-                                      width: MediaQuery.of(context).size.width,
-                                      child: const Text(
-                                        '削除してもよろしいですか。',
-                                        style: TextStyle(letterSpacing: 1),
-                                      )),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, 'キャンセル'),
-                                      child: const Text('キャンセル'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        timer?.cancel();
-                                        deleteChannel(widget.channelData["id"]);
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const MyHomePage(
-                                                      title: 'SLACK APP',
-                                                    )),
-                                            (route) => false);
-                                      },
-                                      child: const Text('はい'),
-                                    ),
+    return GestureDetector(
+      onTap: () => {
+        FocusManager.instance.primaryFocus?.unfocus(),
+        // keyForFlutterMention.currentState?.controller?.clear()
+      },
+      child: Scaffold(
+        appBar: const MyAppBarWidget(),
+        drawer: const Leftpannel(),
+        body: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.blue,
+                ),
+              )
+            : Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(channelName,
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                        const SizedBox(width: 10.0),
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ChannelUsers(channelData: channelData)),
+                            );
+                          },
+                          icon: const Icon(Icons.people, color: Colors.black),
+                          label: Text(userCount.toString(),
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 20.0)),
+                        ),
+                        const SizedBox(width: 10.0),
+                        Row(
+                          children: [
+                            if (mChannelIds.contains(channelId))
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditChannel(
+                                            channelData: widget.channelData,
+                                            channelName: channelName)),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    // Set the background color to gray
+                                    elevation: 0,
+                                    shadowColor: Colors.transparent),
+                                child: const Row(
+                                  children: [
+                                    Icon(Icons.edit,
+                                        color: Colors.black), // Edit icon
+                                    SizedBox(
+                                        width:
+                                            8), // Add spacing between icon and text
+                                    // Button text
                                   ],
                                 ),
                               ),
-                              child:
-                                  const Icon(Icons.delete, color: Colors.black),
-                            )
-                        ],
-                      ),
-                    ],
+                            if (mChannelIds.contains(channelId))
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    shadowColor: Colors.transparent),
+                                onPressed: () => showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    insetPadding: const EdgeInsets.all(10),
+                                    title: SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: const Text(
+                                          '削除してもよろしいですか。',
+                                          style: TextStyle(letterSpacing: 1),
+                                        )),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, 'キャンセル'),
+                                        child: const Text('キャンセル'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          timer?.cancel();
+                                          deleteChannel(
+                                              widget.channelData["id"]);
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const MyHomePage(
+                                                        title: 'SLACK APP',
+                                                      )),
+                                              (route) => false);
+                                        },
+                                        child: const Text('はい'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                child: const Icon(Icons.delete,
+                                    color: Colors.black),
+                              )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 15.0),
-                Expanded(
-                    flex: 3,
-                    child: showMessages(
-                        tGroupMessageDates,
-                        tGroupMessageDatesSizes,
-                        tGroupMessage,
-                        formatter,
-                        ymd,
-                        tGroupStarMsgids,
-                        channelData)),
-                isLoading
-                    ? const Text("")
-                    : Card(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: mChannelIds.contains(channelId)
-                            ? Padding(
-                                padding: const EdgeInsets.only(bottom: 9),
-                                child: SendGroupMessageInput(
-                                    channelData: channelData,
-                                    channelId: channelId,
-                                    channelUsersLists: channelUsersLists))
-                            : SizedBox(
-                                height: 60,
-                                child: ElevatedButton(
-                                    onPressed: () async {
-                                      await channelJoin(channelId);
-                                      print("From show channel $status");
-                                      if (status == true) {
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ShowChannel(
-                                                        channelData:
-                                                            channelData)),
-                                            (route) => false);
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
-                                        elevation: 0,
-                                        shadowColor: Colors.transparent,
-                                        backgroundColor: const Color.fromARGB(
-                                            126, 22, 139, 14)),
-                                    child: const Text("参加",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold))),
-                              ))
-              ],
-            ),
+                  const SizedBox(height: 15.0),
+                  Expanded(
+                      flex: 3,
+                      child: showMessages(
+                          tGroupMessageDates,
+                          tGroupMessageDatesSizes,
+                          tGroupMessage,
+                          formatter,
+                          ymd,
+                          tGroupStarMsgids,
+                          channelData)),
+                  isLoading
+                      ? const Text("")
+                      : Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          child: mChannelIds.contains(channelId)
+                              ? Padding(
+                                  padding: const EdgeInsets.only(bottom: 9),
+                                  child: SendGroupMessageInput(
+                                      channelData: channelData,
+                                      channelId: channelId,
+                                      channelUsersLists: channelUsersLists))
+                              : SizedBox(
+                                  height: 60,
+                                  child: ElevatedButton(
+                                      onPressed: () async {
+                                        await channelJoin(channelId);
+                                        print("From show channel $status");
+                                        if (status == true) {
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ShowChannel(
+                                                          channelData:
+                                                              channelData)),
+                                              (route) => false);
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15)),
+                                          elevation: 0,
+                                          shadowColor: Colors.transparent,
+                                          backgroundColor: const Color.fromARGB(
+                                              126, 22, 139, 14)),
+                                      child: const Text("参加",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold))),
+                                ))
+                ],
+              ),
+      ),
     );
   }
 }
@@ -648,7 +667,7 @@ class SendGroupMessageInput extends StatefulWidget {
 class _SendGroupMessageInputState extends State<SendGroupMessageInput> {
   List<String> mentionedNameList = [];
   String sendText = "";
-  GlobalKey<FlutterMentionsState> key = GlobalKey<FlutterMentionsState>();
+
   @override
   Widget build(BuildContext context) {
     for (var user in widget.channelUsersLists) {
@@ -664,7 +683,7 @@ class _SendGroupMessageInputState extends State<SendGroupMessageInput> {
               onChanged: (value) {
                 sendText = value;
               },
-              key: key,
+              key: keyForFlutterMention,
               suggestionPosition: SuggestionPosition.Top,
               maxLines: 1,
               minLines: 1,
@@ -736,7 +755,7 @@ class _SendGroupMessageInputState extends State<SendGroupMessageInput> {
           onPressed: () async {
             await sendGroupMessage(sendText, widget.channelId);
             if (status == true) {
-              key.currentState?.controller?.clear();
+              keyForFlutterMention.currentState?.controller?.clear();
               // Navigator.pushAndRemoveUntil(
               //     context,
               //     MaterialPageRoute(

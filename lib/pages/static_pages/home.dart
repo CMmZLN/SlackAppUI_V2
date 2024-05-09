@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:Team2SlackApp/pages/m_channels/show_channel.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/layouts/appbar.dart';
 import 'package:Team2SlackApp/pages/leftpannels/leftpannel.dart';
@@ -28,6 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
     refresh();
   }
 
+  
   Future<void> refresh() async {
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
@@ -69,9 +71,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: MyAppBarWidget(),
-      body: Center(
+    return  Scaffold(
+      appBar: const MyAppBarWidget(),
+      body: const Center(
         child: Padding(
           padding: EdgeInsets.only(top: 20.0),
           child: Column(
@@ -101,7 +103,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      drawer: Leftpannel(),
+      drawer: GestureDetector(onTap: ()=>{
+        FocusManager.instance.primaryFocus?.unfocus(),
+        keyForFlutterMention.currentState!.controller!.clear()
+      },child: Leftpannel()),
     );
   }
 }
