@@ -1,6 +1,8 @@
 import 'dart:async';
 // import 'dart:html';
 
+import 'package:Team2SlackApp/pages/layouts/log_out.dart';
+import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
@@ -213,10 +215,19 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
     super.initState();
     _fetchDirectMsgLists();
     timer = Timer.periodic(
-        const Duration(seconds: 2),
-        (Timer t) => {
-              if (timer?.isActive == true) {_fetchDirectMsgLists()}
-            });
+        Duration(seconds: 2),
+        (Timer t) => setState(() {
+              print("DirectTimer");
+              print(member_status);
+              if (member_status == false) {
+                timerHome?.cancel();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Logout()),
+                    (route) => false);
+              }
+              _fetchDirectMsgLists();
+            }));
   }
 
   @override

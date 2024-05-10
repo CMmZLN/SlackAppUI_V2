@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:Team2SlackApp/pages/layouts/log_out.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Team2SlackApp/pages/layouts/appbar.dart';
@@ -26,6 +28,7 @@ class _EditChannelState extends State<EditChannel> {
   String? token;
   int? user_id;
   int? workspace_id;
+  Timer? timer;
 
   Future editChannel(String channelName, int channelStatus) async {
     user_id = await SharedPrefUtils.getInt("userid");
@@ -50,6 +53,20 @@ class _EditChannelState extends State<EditChannel> {
   void initState() {
     super.initState();
     channel_status = widget.channelData["channel_status"] ? 1 : 0;
+
+    timer = Timer.periodic(
+        Duration(seconds: 2),
+        (Timer t) => setState(() {
+              print("ChannelEdit Timer");
+              print(member_status);
+              if (member_status == false) {
+                timerHome?.cancel();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Logout()),
+                    (route) => false);
+              }
+            }));
   }
 
   @override

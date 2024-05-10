@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:Team2SlackApp/pages/layouts/log_out.dart';
+import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -120,12 +122,29 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
     showThreadMessage(widget.channelId, widget.message["id"]);
     retrieveGroupMessage();
 
-    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
-      if (timer?.isActive == true) {
-        showThreadMessage(widget.channelId, widget.message["id"]);
-        retrieveGroupMessage();
-      }
-    });
+    // timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
+    //   if (timer?.isActive == true) {
+    //     showThreadMessage(widget.channelId, widget.message["id"]);
+    //     retrieveGroupMessage();
+    //   }
+    // });
+
+    timer = Timer.periodic(
+        Duration(seconds: 2),
+        (Timer t) => setState(() {
+              print("Channel  thread Timer");
+              print(member_status);
+              if (member_status == false) {
+                timerHome?.cancel();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Logout()),
+                    (route) => false);
+              }
+              showThreadMessage(widget.channelId, widget.message["id"]);
+              retrieveGroupMessage();
+              
+            }));
   }
 
   @override

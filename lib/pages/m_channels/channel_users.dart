@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:Team2SlackApp/pages/layouts/log_out.dart';
 import 'package:Team2SlackApp/pages/m_channels/show_channel.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,8 @@ class _ChannelUsersState extends State<ChannelUsers> {
 
   List<String> nameLists = [];
   String _name = "";
+
+  Timer? timer;
 
   Future<void> getChannelUserData() async {
     token = await SharedPrefUtils.getStr("token");
@@ -114,6 +118,21 @@ class _ChannelUsersState extends State<ChannelUsers> {
     super.initState();
     getChannelUserData();
     getHome();
+
+    timer = Timer.periodic(
+        Duration(seconds: 2),
+        (Timer t) => setState(() {
+              print("ChannelUser Timer");
+              print(member_status);
+              if (member_status == false) {
+                timerHome?.cancel();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) =>const Logout()),
+                    (route) => false);
+              }
+              
+            }));
   }
 
   @override
@@ -133,11 +152,11 @@ class _ChannelUsersState extends State<ChannelUsers> {
                       padding: const EdgeInsets.only(left: 0, right: 10),
                       onPressed: () {
                         Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ShowChannel(
-                                        channelData: widget.channelData)),
-                                (route) => false);
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ShowChannel(
+                                    channelData: widget.channelData)),
+                            (route) => false);
                       },
                       icon: const Icon(Icons.arrow_back_ios_rounded)),
                   Text(widget.channelData["channel_name"],
@@ -186,7 +205,7 @@ class _ChannelUsersState extends State<ChannelUsers> {
                   if (mChannelsIds.contains(sChannelId))
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(50,50),
+                          minimumSize: const Size(50, 50),
                           backgroundColor:
                               const Color.fromARGB(126, 22, 139, 14),
                           shape: RoundedRectangleBorder(

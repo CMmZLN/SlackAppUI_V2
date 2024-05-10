@@ -110,10 +110,9 @@ import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/m_workspace/new.dart';
-import 'package:Team2SlackApp/pages/sessions/new.dart';
 
 class Welcome extends StatefulWidget {
-  const Welcome({Key? key}) : super(key: key);
+  const Welcome({super.key});
   @override
   State<Welcome> createState() => _WelcomeState();
 }

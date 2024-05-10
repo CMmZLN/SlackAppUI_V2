@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:Team2SlackApp/pages/layouts/log_out.dart';
+import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +19,7 @@ class DirectThreadShow extends StatefulWidget {
 }
 
 class _DirectThreadShowState extends State<DirectThreadShow> {
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,9 +201,24 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
   void initState() {
     super.initState();
     _fetchDirectThreadMsg(widget.id);
-    timer = Timer.periodic(
-        const Duration(seconds: 2),
+    // timer = Timer.periodic(
+    //     const Duration(seconds: 2),
+    //     (Timer t) => setState(() {
+    //           _fetchDirectThreadMsg(widget.id);
+    //         }));
+
+     timer = Timer.periodic(
+        Duration(seconds: 2),
         (Timer t) => setState(() {
+              print("direct thread Timer");
+              print(member_status);
+              if (member_status == false) {
+                timerHome?.cancel();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Logout()),
+                    (route) => false);
+              }
               _fetchDirectThreadMsg(widget.id);
             }));
 

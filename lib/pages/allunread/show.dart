@@ -23,6 +23,7 @@ class _AllUnreadState extends State<AllUnread> {
 
   String? token = "";
   int? user_id;
+  int? workspace_id;
   // int numberForGroup = 1;
   // int numberForGroupThread = 1;
 
@@ -35,11 +36,12 @@ class _AllUnreadState extends State<AllUnread> {
   Future<void> _fetchDirectUnreadMsg() async {
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
+    workspace_id = await SharedPrefUtils.getInt("workspaceid");
 
     try {
       final response = await http.get(
         Uri.parse(
-            "https://slackapi-team2.onrender.com/allunread?user_id=$user_id"),
+            "https://slackapi-team2.onrender.com/allunread?user_id=$user_id&workspace_id=$workspace_id"),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -59,8 +61,8 @@ class _AllUnreadState extends State<AllUnread> {
           t_group_messages = data['t_group_messages'];
           print('hello/////');
           t_group_threads = data['t_group_threads'];
-          print('t_group_threads');
-          print(t_group_threads);
+          print('t_direct_threads');
+          print(t_direct_threads);
           print('t_user_threadids');
           print(t_user_threadids);
         });

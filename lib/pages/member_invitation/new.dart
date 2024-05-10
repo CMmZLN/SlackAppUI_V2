@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:Team2SlackApp/pages/layouts/log_out.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/layouts/appbar.dart';
 import 'package:Team2SlackApp/pages/leftpannels/leftpannel.dart';
@@ -23,6 +25,7 @@ class _MemberInviteState extends State<MemberInvite> {
   int? user_id;
   dynamic m_workspace = {};
   List<dynamic> m_channels = [];
+  Timer? timer;
 
   // post member data
   Map<String, dynamic> user_workspace = {};
@@ -100,6 +103,19 @@ class _MemberInviteState extends State<MemberInvite> {
   void initState() {
     super.initState();
     _fetchMemberData();
+    timer = Timer.periodic(
+        Duration(seconds: 2),
+        (Timer t) => setState(() {
+              print("Member Invite Timer");
+              print(member_status);
+              if (member_status == false) {
+                timerHome?.cancel();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Logout()),
+                    (route) => false);
+              }
+            }));
   }
 
   @override
@@ -147,7 +163,6 @@ class _MemberInviteState extends State<MemberInvite> {
             const SizedBox(
               height: 20,
             ),
-            
             const SizedBox(
               height: 20,
             ),
@@ -204,7 +219,8 @@ class _MemberInviteState extends State<MemberInvite> {
               child: TextFormField(
                 controller: emailController,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5)),
                 ),

@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:Team2SlackApp/pages/layouts/log_out.dart';
 import 'package:Team2SlackApp/pages/leftpannels/leftpannel.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/layouts/appbar.dart';
@@ -25,7 +27,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   int? user_id;
   bool _isTextBoxVisible = false;
   String error = '';
-
+  Timer? timer;
   Future<void> changepassword(String password, String confirmpassword) async {
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
@@ -64,11 +66,28 @@ class _ChangePasswordState extends State<ChangePassword> {
     }
   }
 
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(
+        Duration(seconds: 2),
+        (Timer t) => setState(() {
+              print("change password Timer");
+              print(member_status);
+              if (member_status == false) {
+                timerHome?.cancel();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Logout()),
+                    (route) => false);
+              }
+            }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MyAppBarWidget(),
-      drawer:const Leftpannel(),
+      drawer: const Leftpannel(),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

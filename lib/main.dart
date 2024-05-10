@@ -1,4 +1,3 @@
-import 'package:Team2SlackApp/pages/m_channels/show_channel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:Team2SlackApp/pages/static_pages/deep_link_handler.dart';

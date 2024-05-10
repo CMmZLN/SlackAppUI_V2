@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:Team2SlackApp/pages/layouts/log_out.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Team2SlackApp/models/channel.dart';
@@ -40,6 +42,7 @@ Future createChannel(String channelName, int channelStatus) async {
 }
 
 class _ChannelCreateState extends State<ChannelCreate> {
+  Timer? timer;
   final channelNameController = TextEditingController();
   int? channel_status;
   Future<Channel>? futureChannel;
@@ -47,9 +50,23 @@ class _ChannelCreateState extends State<ChannelCreate> {
 
   @override
   void initState() {
-    setState(() {
-      channel_status = 0;
-    });
+ 
+    timer = Timer.periodic(
+        Duration(seconds: 2),
+        (Timer t) => setState(() {
+             channel_status = 0;
+              print("ChannelCreate Timer");
+              print(member_status);
+              if (member_status == false) {
+                timerHome?.cancel();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Logout()),
+                    (route) => false);
+              }
+             
+            }));
+
     super.initState();
   }
 

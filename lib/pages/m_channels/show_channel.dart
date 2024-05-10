@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:Team2SlackApp/pages/layouts/log_out.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_mentions/flutter_mentions.dart';
@@ -16,7 +17,6 @@ import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
 
 bool status = false;
-
 
 GlobalKey<FlutterMentionsState> keyForFlutterMention =
     GlobalKey<FlutterMentionsState>();
@@ -116,24 +116,33 @@ class _ShowChannelState extends State<ShowChannel> {
   @override
   void initState() {
     super.initState();
-
-    retrieveGroupMessage();
-    fetchData();
-    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
-      if (timer?.isActive == true) {
-        retrieveGroupMessage();
-        fetchData();
-      }
-    });
+    //   if (timer?.isActive == true) {
+    //     retrieveGroupMessage();
+    //     fetchData();
+    //   }
+    // });
+    timer = Timer.periodic(
+        Duration(seconds: 2),
+        (Timer t) => setState(() {
+              print("ChannelTimer");
+              print(member_status);
+              if (member_status == false) {
+                timerHome?.cancel();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Logout()),
+                    (route) => false);
+              }
+              retrieveGroupMessage();
+              fetchData();
+            }));
   }
-
-  
 
   @override
   void dispose() {
     print("Dispose Channel");
     timer?.cancel();
-   
+
     super.dispose();
   }
 

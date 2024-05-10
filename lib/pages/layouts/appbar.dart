@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:Team2SlackApp/pages/m_channels/show_channel.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/change_password/new.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';

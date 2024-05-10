@@ -1,11 +1,17 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:Team2SlackApp/pages/m_channels/show_channel.dart';
+import 'package:Team2SlackApp/pages/static_pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/layouts/appbar.dart';
 import 'package:Team2SlackApp/pages/leftpannels/leftpannel.dart';
 import "package:http/http.dart" as http;
 import 'package:Team2SlackApp/pages/share_pref_utils.dart';
+
 // import 'package:Team2SlackApp/models/muser.dart';
+
+Timer? timerHome;
+bool? member_status;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -27,9 +33,27 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     fetchData();
     refresh();
+    timerHome =
+        Timer.periodic(Duration(seconds: 2), (Timer t) => memberStatus());
   }
 
-  
+  Future<void> memberStatus() async {
+    print("Timerkkk");
+    user_id = await SharedPrefUtils.getInt("userid");
+    final response = await http.get(
+      Uri.parse(
+          "https://slackapi-team2.onrender.com/member_status?user_id=$user_id"),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    dynamic data;
+    data = json.decode(response.body);
+    member_status = data["member_status"];
+    print("Member_statauu");
+    print(member_status);
+  }
+
   Future<void> refresh() async {
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
@@ -71,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: const MyAppBarWidget(),
       body: const Center(
         child: Padding(
@@ -103,10 +127,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      drawer: GestureDetector(onTap: ()=>{
-        FocusManager.instance.primaryFocus?.unfocus(),
-        keyForFlutterMention.currentState!.controller!.clear()
-      },child: Leftpannel()),
+      drawer: GestureDetector(
+          onTap: () => {
+                FocusManager.instance.primaryFocus?.unfocus(),
+                keyForFlutterMention.currentState!.controller!.clear()
+              },
+          child: const Leftpannel()),
     );
   }
 }
