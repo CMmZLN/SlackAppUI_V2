@@ -276,7 +276,7 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
                       children: [
                         Text(
                           DateFormat('yyyy-MM-dd hh:m a')
-                              .format(DateTime.parse(tDirect['created_at'])),
+                              .format(DateTime.parse(tDirect['created_at']).toLocal()),
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,

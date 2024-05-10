@@ -95,7 +95,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
       send_user_name = data['send_user']["name"];
       directMsg = data['t_direct_message']["directmsg"];
       directMsgDate = DateFormat('yyyy-MM-dd hh:m a')
-          .format(DateTime.parse(t_direct_msg['created_at'].toString()));
+          .format(DateTime.parse(t_direct_msg['created_at'].toString()).toLocal());
       // });
     } else {
       throw Exception("Failed to load data");
@@ -374,7 +374,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
                     children: [
                       Text(
                         DateFormat('yyyy-MM-dd hh:m a').format(DateTime.parse(
-                            t_direct_thread[index]['created_at'])),
+                            t_direct_thread[index]['created_at']).toLocal()),
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,

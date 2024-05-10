@@ -202,7 +202,7 @@ class _ShowChannelState extends State<ShowChannel> {
                         if (tGroupMessageDates[index1]["created_date"]
                                 .toString() ==
                             ymd.format(DateTime.parse(
-                                tGroupMessage[index]["created_at"].toString())))
+                                tGroupMessage[index]["created_at"].toString()).toLocal()))
                           Column(
                             children: [
                               Row(
@@ -233,7 +233,7 @@ class _ShowChannelState extends State<ShowChannel> {
                                     padding: const EdgeInsets.only(right: 10),
                                     child: Text(
                                       formatter.format(DateTime.parse(
-                                          tGroupMessage[index]["created_at"])),
+                                          tGroupMessage[index]["created_at"]).toLocal()),
                                       style: const TextStyle(fontSize: 18),
                                     ),
                                   ),

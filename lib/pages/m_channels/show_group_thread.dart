@@ -76,7 +76,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
         tGroupMessageId = data["retrieveGroupThread"]["t_group_message"]["id"];
         tGroupMessageUsername = widget.message["name"];
         dynamic tGroupMessageTime = widget.message["created_at"];
-        DateTime time = DateTime.parse(tGroupMessageTime);
+        DateTime time = DateTime.parse(tGroupMessageTime).toLocal();
         tGroupMessageSendHour = formatter.format(time);
         tGroupMessageYMD = ymd.format(time);
         tGroupThread = data["retrieveGroupThread"]["t_group_threads"];
@@ -300,7 +300,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                                 Expanded(
                                   flex: 5,
                                   child: Text(
-                                    "${ymd.format(DateTime.parse(tGroupThread[index]["created_at"]))}/${formatter.format(DateTime.parse(tGroupThread[index]["created_at"]))}",
+                                    "${ymd.format(DateTime.parse(tGroupThread[index]["created_at"]))}/${formatter.format(DateTime.parse(tGroupThread[index]["created_at"]).toLocal())}",
                                     style: const TextStyle(fontSize: 18.0),
                                   ),
                                 ),
