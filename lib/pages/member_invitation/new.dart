@@ -104,7 +104,7 @@ class _MemberInviteState extends State<MemberInvite> {
     super.initState();
     _fetchMemberData();
     timer = Timer.periodic(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         (Timer t) => setState(() {
               print("Member Invite Timer");
               print(member_status);

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:Team2SlackApp/pages/m_channels/show_channel.dart';
-import 'package:Team2SlackApp/pages/static_pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/layouts/appbar.dart';
 import 'package:Team2SlackApp/pages/leftpannels/leftpannel.dart';
@@ -34,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
     fetchData();
     refresh();
     timerHome =
-        Timer.periodic(Duration(seconds: 2), (Timer t) => memberStatus());
+        Timer.periodic(const Duration(seconds: 2), (Timer t) => memberStatus());
   }
 
   Future<void> memberStatus() async {

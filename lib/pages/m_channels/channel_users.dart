@@ -120,7 +120,7 @@ class _ChannelUsersState extends State<ChannelUsers> {
     getHome();
 
     timer = Timer.periodic(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         (Timer t) => setState(() {
               print("ChannelUser Timer");
               print(member_status);

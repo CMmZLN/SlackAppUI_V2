@@ -66,10 +66,11 @@ class _ChangePasswordState extends State<ChangePassword> {
     }
   }
 
+  @override
   void initState() {
     super.initState();
     timer = Timer.periodic(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         (Timer t) => setState(() {
               print("change password Timer");
               print(member_status);
@@ -77,7 +78,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => Logout()),
+                    MaterialPageRoute(builder: (context) => const Logout()),
                     (route) => false);
               }
             }));

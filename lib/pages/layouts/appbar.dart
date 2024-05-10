@@ -108,8 +108,8 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
         IconButton(
           icon: const Icon(Icons.logout),
           onPressed: () {
-            // timer?.cancel();
-            
+            timerHome?.cancel();
+
             _Logout(user_id!);
           },
         ),

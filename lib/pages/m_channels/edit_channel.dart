@@ -55,7 +55,7 @@ class _EditChannelState extends State<EditChannel> {
     channel_status = widget.channelData["channel_status"] ? 1 : 0;
 
     timer = Timer.periodic(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         (Timer t) => setState(() {
               print("ChannelEdit Timer");
               print(member_status);

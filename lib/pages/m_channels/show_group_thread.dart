@@ -130,7 +130,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
     // });
 
     timer = Timer.periodic(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         (Timer t) => setState(() {
               print("Channel  thread Timer");
               print(member_status);
@@ -138,7 +138,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => Logout()),
+                    MaterialPageRoute(builder: (context) => const Logout()),
                     (route) => false);
               }
               showThreadMessage(widget.channelId, widget.message["id"]);

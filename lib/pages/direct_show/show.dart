@@ -215,7 +215,7 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
     super.initState();
     _fetchDirectMsgLists();
     timer = Timer.periodic(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         (Timer t) => setState(() {
               print("DirectTimer");
               print(member_status);
@@ -223,7 +223,7 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => Logout()),
+                    MaterialPageRoute(builder: (context) => const Logout()),
                     (route) => false);
               }
               _fetchDirectMsgLists();

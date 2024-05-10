@@ -52,7 +52,7 @@ class _ChannelCreateState extends State<ChannelCreate> {
   void initState() {
  
     timer = Timer.periodic(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         (Timer t) => setState(() {
              channel_status = 0;
               print("ChannelCreate Timer");
@@ -61,7 +61,7 @@ class _ChannelCreateState extends State<ChannelCreate> {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => Logout()),
+                    MaterialPageRoute(builder: (context) => const Logout()),
                     (route) => false);
               }
              

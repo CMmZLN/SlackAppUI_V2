@@ -59,12 +59,9 @@ class _AllUnreadState extends State<AllUnread> {
           t_user_channelids = data['t_user_channelids'];
           t_user_threadids = data["t_user_channelthreadids"];
           t_group_messages = data['t_group_messages'];
-          print('hello/////');
           t_group_threads = data['t_group_threads'];
           print('t_direct_threads');
           print(t_direct_threads);
-          print('t_user_threadids');
-          print(t_user_threadids);
         });
       } else {
         throw Exception("Failed to load data");

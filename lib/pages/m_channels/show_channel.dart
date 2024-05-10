@@ -122,7 +122,7 @@ class _ShowChannelState extends State<ShowChannel> {
     //   }
     // });
     timer = Timer.periodic(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         (Timer t) => setState(() {
               print("ChannelTimer");
               print(member_status);
@@ -130,7 +130,7 @@ class _ShowChannelState extends State<ShowChannel> {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => Logout()),
+                    MaterialPageRoute(builder: (context) => const Logout()),
                     (route) => false);
               }
               retrieveGroupMessage();
