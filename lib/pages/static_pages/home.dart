@@ -37,7 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> memberStatus() async {
-    print("Timerkkk");
     user_id = await SharedPrefUtils.getInt("userid");
     final response = await http.get(
       Uri.parse(
@@ -49,8 +48,6 @@ class _MyHomePageState extends State<MyHomePage> {
     dynamic data;
     data = json.decode(response.body);
     member_status = data["member_status"];
-    print("Member_statauu");
-    print(member_status);
   }
 
   Future<void> refresh() async {
@@ -64,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
     if (response.statusCode == 200) {
-      print("Changed");
+      return;
     } else {
       print("Not yet");
     }

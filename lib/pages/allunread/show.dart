@@ -47,20 +47,20 @@ class _AllUnreadState extends State<AllUnread> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      print(response.statusCode);
+      
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("All Unread Message Data");
+        
         print("All Unread data $data");
         setState(() {
-          print('Hello...');
+          
           t_direct_messages = data['t_direct_messages'];
           t_direct_threads = data['t_direct_threads'];
           t_user_channelids = data['t_user_channelids'];
           t_user_threadids = data["t_user_channelthreadids"];
           t_group_messages = data['t_group_messages'];
           t_group_threads = data['t_group_threads'];
-          print('t_direct_threads');
+          
           print(t_direct_threads);
         });
       } else {

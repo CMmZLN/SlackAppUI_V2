@@ -57,8 +57,8 @@ class _EditChannelState extends State<EditChannel> {
     timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-              print("ChannelEdit Timer");
-              print(member_status);
+              
+              // print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(

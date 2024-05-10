@@ -104,14 +104,7 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json; charset=UTF-8',
           });
-      // if (response.statusCode == 200) {
-      //   Navigator.push(
-      //     context,
-      //     MaterialPageRoute(builder: (context) => const directmsgshow()),
-      //   );
-      // } else {
-      //   throw Exception('Failed to delete data');
-      // }
+     
     } catch (error) {
       print(error);
     }
@@ -192,15 +185,7 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
           final data = jsonDecode(response.body);
           SharedPrefUtils.saveInt("rdirectsize", data);
           _fetchDirectMsgLists();
-          // s_user_name = data['refresh_direct']['s_user']['name'];
-          // t_direct_msg = data['refresh_direct']['t_direct_messages'];
-          // t_direct_star_msgids = data['refresh_direct']['t_direct_star_msgids'];
-          // if (showLastTen) {
-          //   t_direct_msg = t_direct_msg.reversed.take(10).toList(); // Reversed
-          // } else {
-          //   t_direct_msg = t_direct_msg.reversed.toList(); // Unreversed
-          // }
-          // showLastTen = !showLastTen; // Toggle showLastTen state
+         
         });
       } else {
         throw Exception("Failed to refresh direct messages");
@@ -217,8 +202,7 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
     timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-              print("DirectTimer");
-              print(member_status);
+              // print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(
@@ -232,16 +216,12 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
 
   @override
   void dispose() {
-    print("in dispose>>>>");
     timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // print("Scrolll");
-    // print(isScroll);
-
     // Perform your task
     if (directMessageScroller.hasClients && isScroll) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -254,17 +234,7 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
       isScroll = false;
     }
 
-    // if (!isScroll) {
-    //   print("method");
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     directMessageScroller.animateTo(
-    //       directMessageScroller.position.maxScrollExtent,
-    //       duration: const Duration(milliseconds: 60),
-    //       curve: Curves.easeOut,
-    //     );
-    //   });
-    //   isScroll = true;
-    // }
+   
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SizedBox(

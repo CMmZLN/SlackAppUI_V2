@@ -72,8 +72,8 @@ class _ChangePasswordState extends State<ChangePassword> {
     timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-              print("change password Timer");
-              print(member_status);
+             
+              // print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(

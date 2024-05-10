@@ -74,7 +74,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
     s_user_id = await SharedPrefUtils.getInt("s_user_id");
-    print("Direct Thread Working");
+    
     final response = await http.get(
       Uri.parse(
           "https://slackapi-team2.onrender.com/directthreadmsg?t_direct_message_id=$tDirectMessageId&user_id=$user_id&s_user_id=$s_user_id"),
@@ -86,8 +86,8 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
     if (response.statusCode == 200) {
       // setState(() {
       final data = jsonDecode(response.body);
-      print('data.........');
-      print(data);
+     
+      // print(data);
       s_user_name = data['s_user']['name'];
       t_direct_msg = data['t_direct_message'];
       t_direct_thread = data['t_direct_threads'];
@@ -210,7 +210,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
      timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-              print("direct thread Timer");
+             
               print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
@@ -245,7 +245,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
           duration: const Duration(milliseconds: 60),
           curve: Curves.easeOut,
         );
-        print("Scroller Work in directThread.");
+        
       });
       isScroll = false;
     }

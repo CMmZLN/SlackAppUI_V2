@@ -55,8 +55,8 @@ class _ChannelCreateState extends State<ChannelCreate> {
         const Duration(seconds: 2),
         (Timer t) => setState(() {
              channel_status = 0;
-              print("ChannelCreate Timer");
-              print(member_status);
+              
+              // print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(

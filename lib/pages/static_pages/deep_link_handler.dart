@@ -16,15 +16,15 @@ class _DeepLinkHandlerState extends State<DeepLinkHandler> {
   String? tokenValue;
   @override
   void initState() {
-    print("Init");
+    
     initDeepLink();
     set_token();
     super.initState();
   }
 
   void initDeepLink() async {
-    print('djfldjfldf');
-    print("URI");
+    // print('djfldjfldf');
+    // print("URI");
     try {
       String? initialLink = await getInitialLink();
       setState(() {
@@ -51,14 +51,14 @@ class _DeepLinkHandlerState extends State<DeepLinkHandler> {
     String? channelName = uri.queryParameters['channel_name'];
     String? workspaceName = uri.queryParameters['workspace_name'];
     String? workspaceid = uri.queryParameters['workspaceid'];
-    print("Member invitation route");
-    print(route);
-    print(email);
-    print(channelName);
-    print(workspaceName);
+    // print("Member invitation route");
+    // print(route);
+    // print(email);
+    // print(channelName);
+    // print(workspaceName);
     // Navigate to the corresponding screen based on the route
     if (route == '/member_invite') {
-      print('hello hello');
+      
       Navigator.push(
         context,
         MaterialPageRoute(

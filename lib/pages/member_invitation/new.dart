@@ -106,8 +106,8 @@ class _MemberInviteState extends State<MemberInvite> {
     timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-              print("Member Invite Timer");
-              print(member_status);
+             
+              // print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(

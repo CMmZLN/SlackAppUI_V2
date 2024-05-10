@@ -62,8 +62,8 @@ class _LeftpannelState extends State<Leftpannel> {
         direct_msgcounts = body['direct_msgcounts'];
         mChannelIds = body["m_channelsids"];
         mPublicChannels = body["m_p_channels"];
-        print('all_unread_count');
-        print(all_unread_count);
+       
+        // print(all_unread_count);
       });
     }
   }

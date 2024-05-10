@@ -55,7 +55,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
     user_id = await SharedPrefUtils.getInt("userid");
     workspace_id = await SharedPrefUtils.getInt("workspaceid");
 
-    print("fetching showThreadMessage");
+    // print("fetching showThreadMessage");
     final respone = await http.post(
         Uri.parse(
             "https://slackapi-team2.onrender.com/t_group_message/?s_channel_id=$channelId&user_id=$user_id&s_group_message_id=$messageId&workspace_id=$workspace_id"),
@@ -93,7 +93,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
     user_id = await SharedPrefUtils.getInt("userid");
     workspace_id = await SharedPrefUtils.getInt("workspaceid");
 
-    print("fetching fetrieveGroupMessage");
+    // print("fetching fetrieveGroupMessage");
     final response = await http.get(
         Uri.parse(
             "https://slackapi-team2.onrender.com/m_channels/channelshow/?id=${widget.channelId}&user_id=$user_id&workspace_id=$workspace_id"),
@@ -132,8 +132,8 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
     timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-              print("Channel  thread Timer");
-              print(member_status);
+              
+              // print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(
@@ -163,7 +163,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
           curve: Curves.linear,
         );
       });
-      print("Scroller Hello Channel Thread");
+      // print("Scroller Hello Channel Thread");
       isScroll = false;
     }
 
@@ -658,8 +658,8 @@ class _sendGroupMessageInputState extends State<sendGroupMessageInput> {
     if (message.isEmpty) {
       return;
     } else {
-      print('channel id ............');
-      print(channelId);
+      
+      
       final request = await http.post(
           Uri.parse("https://slackapi-team2.onrender.com/groupthreadmsg"),
           headers: <String, String>{

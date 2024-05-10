@@ -122,8 +122,8 @@ class _ChannelUsersState extends State<ChannelUsers> {
     timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-              print("ChannelUser Timer");
-              print(member_status);
+             
+              // print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(
@@ -218,7 +218,7 @@ class _ChannelUsersState extends State<ChannelUsers> {
                         }
 
                         if (status == true) {
-                          print(status);
+                          
                           Navigator.push(
                             context,
                             MaterialPageRoute(

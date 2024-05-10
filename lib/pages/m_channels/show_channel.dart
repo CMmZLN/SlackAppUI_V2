@@ -52,7 +52,7 @@ class _ShowChannelState extends State<ShowChannel> {
   bool isScroll = true;
   Timer? timer;
   Future<void> fetchData() async {
-    print("timer fetchData");
+    
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
     workspace_id = await SharedPrefUtils.getInt("workspaceid");
@@ -75,7 +75,7 @@ class _ShowChannelState extends State<ShowChannel> {
   }
 
   Future<void> retrieveGroupMessage() async {
-    print("Timer retrieveGroupMessage");
+   
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
     workspace_id = await SharedPrefUtils.getInt("workspaceid");
@@ -103,7 +103,7 @@ class _ShowChannelState extends State<ShowChannel> {
         tGroupStarMsgids = data["retrieveGroupMessage"]["t_group_star_msgids"];
         channelUsersLists = data["retrieveGroupMessage"]["m_channel_users"];
       });
-      print("tGroupMessage   $tGroupMessage");
+      
     }
   }
 
@@ -124,8 +124,8 @@ class _ShowChannelState extends State<ShowChannel> {
     timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-              print("ChannelTimer");
-              print(member_status);
+              
+              // print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
                 Navigator.pushAndRemoveUntil(
@@ -140,7 +140,7 @@ class _ShowChannelState extends State<ShowChannel> {
 
   @override
   void dispose() {
-    print("Dispose Channel");
+  
     timer?.cancel();
 
     super.dispose();
@@ -166,7 +166,7 @@ class _ShowChannelState extends State<ShowChannel> {
           curve: Curves.linear,
         );
       });
-      print("hello show channel");
+      
       isScroll = false;
     }
 
@@ -530,7 +530,7 @@ class _ShowChannelState extends State<ShowChannel> {
                                   child: ElevatedButton(
                                       onPressed: () async {
                                         await channelJoin(channelId);
-                                        print("From show channel $status");
+                                       
                                         if (status == true) {
                                           Navigator.pushAndRemoveUntil(
                                               context,

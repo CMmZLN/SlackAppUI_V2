@@ -15,9 +15,6 @@ class MemberConfirm extends StatefulWidget {
       {super.key});
   @override
   _MemberConfirmState createState() {
-    print("Route1111");
-    print(email);
-    print(workspaceid);
     return _MemberConfirmState(
         email, channel_name, workspace_name, workspaceid);
   }

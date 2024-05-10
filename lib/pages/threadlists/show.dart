@@ -221,8 +221,8 @@ class _ThreadState extends State<Thread> {
                             children: List.generate(t_direct_threads.length,
                                 (indexThread) {
                               final tThread = t_direct_threads[indexThread];
-                              print("Share Pref User Id ------------$user_id");
-                              print(tThread);
+                             
+                              // print(tThread);
                               if (tDirect['id'] ==
                                       tThread['t_direct_message_id'] &&
                                   user_id == tThread["m_user_id"]) {
