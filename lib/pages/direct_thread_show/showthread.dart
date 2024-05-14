@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Team2SlackApp/pages/direct_show/show.dart';
 import 'package:Team2SlackApp/pages/layouts/log_out.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:flutter/material.dart';
@@ -18,32 +19,11 @@ class DirectThreadShow extends StatefulWidget {
   State<DirectThreadShow> createState() => _DirectThreadShowState();
 }
 
-class _DirectThreadShowState extends State<DirectThreadShow> {
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const MyAppBarWidget(),
-      body: Column(
-        children: [
-          Expanded(
-            child: DirectThreadMessageLists(id: widget.id),
-          ),
-          // SizedBox(width: 10),
-          SizedBox(
-            height: 70,
-            child: SendDirectThreadMessage(id: widget.id),
-          ),
-        ],
-      ),
-      drawer: const Leftpannel(),
-    );
-  }
-}
+
 
 class DirectThreadMessageLists extends StatefulWidget {
-  final int id;
-  const DirectThreadMessageLists({super.key, required this.id});
+  int id;
+  DirectThreadMessageLists({super.key, required this.id});
 
   @override
   State<DirectThreadMessageLists> createState() =>
@@ -74,7 +54,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
     s_user_id = await SharedPrefUtils.getInt("s_user_id");
-    
+
     final response = await http.get(
       Uri.parse(
           "https://slackapi-team2.onrender.com/directthreadmsg?t_direct_message_id=$tDirectMessageId&user_id=$user_id&s_user_id=$s_user_id"),
@@ -84,19 +64,21 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
       },
     );
     if (response.statusCode == 200) {
-      // setState(() {
       final data = jsonDecode(response.body);
-     
-      // print(data);
-      s_user_name = data['s_user']['name'];
-      t_direct_msg = data['t_direct_message'];
-      t_direct_thread = data['t_direct_threads'];
-      t_direct_star_thread_msgids = data['t_direct_star_thread_msgids'];
-      send_user_name = data['send_user']["name"];
-      directMsg = data['t_direct_message']["directmsg"];
-      directMsgDate = DateFormat('yyyy-MM-dd hh:m a')
-          .format(DateTime.parse(t_direct_msg['created_at'].toString()).toLocal());
-      // });
+      setState(() {
+        // print(data);
+        s_user_name = data['s_user']['name'];
+        t_direct_msg = data['t_direct_message'];
+        t_direct_thread = data['t_direct_threads'];
+        t_direct_star_thread_msgids = data['t_direct_star_thread_msgids'];
+        send_user_name = data['send_user']["name"];
+        directMsg = data['t_direct_message']["directmsg"];
+        directMsgDate = DateFormat('yyyy-MM-dd hh:m a')
+            .format(DateTime.parse(t_direct_msg['created_at']).toLocal());
+
+        print(directMsg);
+        print(t_direct_thread);
+      });
     } else {
       throw Exception("Failed to load data");
     }
@@ -207,10 +189,9 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
     //           _fetchDirectThreadMsg(widget.id);
     //         }));
 
-     timer = Timer.periodic(
+    timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-             
               print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
@@ -245,7 +226,6 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
           duration: const Duration(milliseconds: 60),
           curve: Curves.easeOut,
         );
-        
       });
       isScroll = false;
     }
@@ -263,11 +243,25 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          s_user_name,
-                          style: const TextStyle(
-                            fontSize: 30,
-                          ),
+                        Row(
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              directmsgshow()),
+                                      (route) => false);
+                                },
+                                icon: const Icon(Icons.arrow_back_ios_rounded)),
+                            Text(
+                              s_user_name,
+                              style: const TextStyle(
+                                fontSize: 30,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           height: 8,
@@ -280,7 +274,18 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
               SizedBox(
                   child: Container(
                 margin: const EdgeInsets.all(8.0),
-                color: const Color.fromARGB(226, 233, 238, 239),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color.fromARGB(255, 119, 199, 119)
+                        .withOpacity(0.4),
+                    width: 2,
+                  ),
+                  color: user_id == t_direct_msg["send_user_id"]
+                      ? const Color.fromARGB(255, 119, 199, 119)
+                          .withOpacity(0.4)
+                      : Colors.transparent,
+                ),
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -367,14 +372,26 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
               for (int index = 0; index < t_direct_thread.length; index++)
                 Container(
                   margin: const EdgeInsets.all(8.0),
-                  color: const Color.fromARGB(226, 233, 238, 239),
                   padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 119, 199, 119)
+                          .withOpacity(0.4),
+                      width: 2,
+                    ),
+                    color: user_id == t_direct_thread[index]["m_user_id"]
+                        ? const Color.fromARGB(255, 119, 199, 119)
+                            .withOpacity(0.4)
+                        : Colors.transparent,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         DateFormat('yyyy-MM-dd hh:m a').format(DateTime.parse(
-                            t_direct_thread[index]['created_at']).toLocal()),
+                                t_direct_thread[index]['created_at'].toString())
+                            .toLocal()),
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -493,11 +510,13 @@ class _SendDirectThreadMessageState extends State<SendDirectThreadMessage> {
   bool status = false;
   String? token = "";
   int? user_id;
+  int? s_user_id;
 
   Future<void> _sendDirectThread(int id) async {
     final String message = messageController.text;
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
+    s_user_id = await SharedPrefUtils.getInt("s_user_id");
 
     if (message.isEmpty) {
       print(
@@ -508,7 +527,7 @@ class _SendDirectThreadMessageState extends State<SendDirectThreadMessage> {
     }
     final response = await http.post(
         Uri.parse(
-            "https://slackapi-team2.onrender.com/directthreadmsg?t_direct_message_id=$id&m_user_id=$user_id"),
+            "https://slackapi-team2.onrender.com/directthreadmsg?t_direct_message_id=$id&m_user_id=$user_id&receive_user_id=$s_user_id"),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json; charset=UTF-8',
@@ -571,6 +590,29 @@ class _SendDirectThreadMessageState extends State<SendDirectThreadMessage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+
+class _DirectThreadShowState extends State<DirectThreadShow> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: const MyAppBarWidget(),
+      body: Column(
+        children: [
+          Expanded(
+            child: DirectThreadMessageLists(id: widget.id),
+          ),
+          // SizedBox(width: 10),
+          SizedBox(
+            height: 70,
+            child: SendDirectThreadMessage(id: widget.id),
+          ),
+        ],
+      ),
+      drawer: const Leftpannel(),
     );
   }
 }

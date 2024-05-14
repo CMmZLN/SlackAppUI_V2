@@ -123,7 +123,8 @@ class _StarListsState extends State<StarLists> {
                             flex: 8,
                             child: Text(
                               DateFormat('yyyy-MM-dd/ hh:mm a').format(
-                                  DateTime.parse(tDirect['created_at'])),
+                                  DateTime.parse(tDirect['created_at'])
+                                      .toLocal()),
                               style: const TextStyle(
                                 fontSize: 18,
                               ),
@@ -183,10 +184,9 @@ class _StarListsState extends State<StarLists> {
             child: Text(
               'ダイレクトスレッドスターリスト',
               style: TextStyle(
-                fontSize: 23,
-                color: Color.fromARGB(126, 22, 139, 14),
-                fontWeight: FontWeight.bold
-              ),
+                  fontSize: 23,
+                  color: Color.fromARGB(126, 22, 139, 14),
+                  fontWeight: FontWeight.bold),
             ),
           ),
           SliverList(
@@ -224,7 +224,8 @@ class _StarListsState extends State<StarLists> {
                             flex: 8,
                             child: Text(
                               DateFormat('yyyy-MM-dd/ hh:mm a').format(
-                                  DateTime.parse(tThread['created_at'])),
+                                  DateTime.parse(tThread['created_at'])
+                                      .toLocal()),
                               style: const TextStyle(
                                 fontSize: 18,
                               ),
@@ -324,8 +325,9 @@ class _StarListsState extends State<StarLists> {
                           Expanded(
                             flex: 8,
                             child: Text(
-                              DateFormat('yyyy-MM-dd/ hh:mm a')
-                                  .format(DateTime.parse(tGroup['created_at'])),
+                              DateFormat('yyyy-MM-dd/ hh:mm a').format(
+                                  DateTime.parse(tGroup['created_at'])
+                                      .toLocal()),
                               style: const TextStyle(
                                 fontSize: 18,
                               ),
@@ -362,7 +364,7 @@ class _StarListsState extends State<StarLists> {
                               icon: const Icon(
                                 Icons.star,
                                 size: 25,
-                                color:Color.fromARGB(126, 22, 139, 14),
+                                color: Color.fromARGB(126, 22, 139, 14),
                               ),
                             ),
                           ),
@@ -426,7 +428,8 @@ class _StarListsState extends State<StarLists> {
                             flex: 8,
                             child: Text(
                               DateFormat('yyyy-MM-dd/ hh:mm a').format(
-                                  DateTime.parse(tGroupThread['created_at'])),
+                                  DateTime.parse(tGroupThread['created_at'])
+                                      .toLocal()),
                               style: const TextStyle(
                                 fontSize: 18,
                               ),

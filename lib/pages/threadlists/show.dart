@@ -143,8 +143,8 @@ class _ThreadState extends State<Thread> {
                                     flex: 5,
                                     child: Text(
                                       DateFormat('yyyy-MM-dd/ hh:mm a').format(
-                                          DateTime.parse(
-                                              tDirect['created_at'])),
+                                          DateTime.parse(tDirect['created_at'])
+                                              .toLocal()),
                                       style: const TextStyle(
                                         fontSize: 18,
                                       ),
@@ -221,7 +221,7 @@ class _ThreadState extends State<Thread> {
                             children: List.generate(t_direct_threads.length,
                                 (indexThread) {
                               final tThread = t_direct_threads[indexThread];
-                             
+
                               // print(tThread);
                               if (tDirect['id'] ==
                                       tThread['t_direct_message_id'] &&
@@ -255,7 +255,8 @@ class _ThreadState extends State<Thread> {
                                           child: Text(
                                             DateFormat('yyyy-MM-dd/ hh:mm a')
                                                 .format(DateTime.parse(
-                                                    tThread['created_at'])),
+                                                        tThread['created_at'])
+                                                    .toLocal()),
                                             style: const TextStyle(
                                               fontSize: 18,
                                             ),
@@ -392,7 +393,8 @@ class _ThreadState extends State<Thread> {
                                 flex: 5,
                                 child: Text(
                                   DateFormat('yyyy-MM-dd/ hh:mm a').format(
-                                      DateTime.parse(tGroup['created_at'])),
+                                      DateTime.parse(tGroup['created_at'])
+                                          .toLocal()),
                                   style: const TextStyle(
                                     fontSize: 18,
                                   ),
@@ -467,9 +469,8 @@ class _ThreadState extends State<Thread> {
                                 List.generate(t_group_threads.length, (index) {
                               final tGroupThread = t_group_threads[index];
                               if (tGroup['id'] ==
-                                  tGroupThread['t_group_message_id'] &&
-                                  user_id == tGroupThread["m_user_id"]
-                                  ) {
+                                      tGroupThread['t_group_message_id'] &&
+                                  user_id == tGroupThread["m_user_id"]) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -497,8 +498,9 @@ class _ThreadState extends State<Thread> {
                                           child: Text(
                                             DateFormat('yyyy-MM-dd/ hh:mm a')
                                                 .format(DateTime.parse(
-                                                    tGroupThread[
-                                                        'created_at'])),
+                                                        tGroupThread[
+                                                            'created_at'])
+                                                    .toLocal()),
                                             style: const TextStyle(
                                               fontSize: 18,
                                             ),

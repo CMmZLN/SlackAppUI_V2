@@ -39,6 +39,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
   dynamic tGroupThread = [];
   dynamic tGroupThreadStarMsgids = [];
   dynamic channelUsersLists = [];
+  int? tGroup_send_user_id;
   // List<Map<String, dynamic>> channelUsers = [];
   String? token;
   int? user_id;
@@ -71,6 +72,10 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
         channelData = data["retrieveGroupThread"]["s_channel"];
         channelName = data["retrieveGroupThread"]["s_channel"]["channel_name"];
         userCount = data["retrieveGroupThread"]["u_count"];
+        tGroup_send_user_id =
+            data["retrieveGroupThread"]["t_group_message"]["m_user_id"];
+
+        print("TGroup Send User Id ----->>> $tGroup_send_user_id");
         tGroupMessage =
             data["retrieveGroupThread"]["t_group_message"]["groupmsg"];
         tGroupMessageId = data["retrieveGroupThread"]["t_group_message"]["id"];
@@ -132,7 +137,6 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
     timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-              
               // print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
@@ -143,7 +147,6 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
               }
               showThreadMessage(widget.channelId, widget.message["id"]);
               retrieveGroupMessage();
-              
             }));
   }
 
@@ -205,54 +208,75 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                     ],
                   ),
                 ),
+
+                // Color changes for reply message
                 Container(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const Text("1",
-                          style:  TextStyle(fontSize: 20.0)),
-                      const SizedBox(
-                        width: 7,
-                      ),
-                      Expanded(
-                        flex: 5,
-                        child: Text(tGroupMessageUsername,
-                            style: const TextStyle(fontSize: 20.0)),
-                      ),
-                      Expanded(
-                        flex: 5,
-                        child: Text("$tGroupMessageYMD/$tGroupMessageSendHour",
-                            style: const TextStyle(fontSize: 18.0)),
-                      )
-                    ],
+                  margin: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 119, 199, 119)
+                          .withOpacity(0.4),
+                      width: 2,
+                    ),
+                    color: user_id == tGroup_send_user_id
+                        ? const Color.fromARGB(255, 148, 197, 148)
+                            .withOpacity(0.4)
+                        : Colors.transparent,
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-                  child: SizedBox(
-                    height: 80,
-                    child: Row(
-                      children: [
-                        const Icon(Icons.arrow_forward),
-                        const SizedBox(width: 20.0),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Text(tGroupMessage,
+                  child: Column(children: [
+                    Container(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const Text("1", style: TextStyle(fontSize: 20.0)),
+                          const SizedBox(
+                            width: 7,
+                          ),
+                          Expanded(
+                            flex: 5,
+                            child: Text(tGroupMessageUsername,
                                 style: const TextStyle(fontSize: 20.0)),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            flex: 5,
+                            child: Text(
+                                "$tGroupMessageYMD/$tGroupMessageSendHour",
+                                style: const TextStyle(fontSize: 18.0)),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
+                      child: SizedBox(
+                        height: 80,
+                        child: Row(
+                          children: [
+                            const Icon(Icons.arrow_forward),
+                            const SizedBox(width: 20.0),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Text(tGroupMessage,
+                                    style: const TextStyle(fontSize: 20.0)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ]),
                 ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 0, 20),
-                  child: Divider(
-                    color: Colors.grey,
-                    thickness: 1.0,
-                  ),
-                ),
+
+                // const Padding(
+                //   padding: EdgeInsets.fromLTRB(20, 0, 0, 20),
+                //   child: Divider(
+                //     color: Colors.grey,
+                //     thickness: 1.0,
+                //   ),
+                // ),
                 const Padding(
                   padding:
                       EdgeInsets.only(left: 20, top: 0, right: 20, bottom: 20),
@@ -269,119 +293,89 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                 //     thickness: 1.0,
                 //   ),
                 // ),
+
+                // Color changes for channel thread chatbox
                 Expanded(
                   child: ListView.builder(
                     controller: threadScroller,
                     itemCount: tGroupThread.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            left: 0, right: 0, top: 20, bottom: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                  "${index + 1}",
-                                  style: const TextStyle(fontSize: 20.0),
-                                ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                Expanded(
-                                  flex: 5,
-                                  child: Text(
-                                    tGroupThread[index]["name"],
+                      return Container(
+                        margin: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 119, 199, 119)
+                                .withOpacity(0.4),
+                            width: 2,
+                          ),
+                          color: user_id == tGroupThread[index]["m_user_id"]
+                              ? const Color.fromARGB(255, 148, 197, 148)
+                                  .withOpacity(0.4)
+                              : Colors.transparent,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 0, right: 0, top: 20, bottom: 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(
+                                    "${index + 1}",
                                     style: const TextStyle(fontSize: 20.0),
                                   ),
-                                ),
-                                Expanded(
-                                  flex: 5,
-                                  child: Text(
-                                    "${ymd.format(DateTime.parse(tGroupThread[index]["created_at"]))}/${formatter.format(DateTime.parse(tGroupThread[index]["created_at"]).toLocal())}",
-                                    style: const TextStyle(fontSize: 18.0),
+                                  const SizedBox(
+                                    width: 8,
                                   ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.arrow_forward),
-                                  const SizedBox(width: 20.0),
                                   Expanded(
+                                    flex: 5,
                                     child: Text(
-                                      tGroupThread[index]["groupthreadmsg"],
-                                      style: const TextStyle(
-                                        fontSize: 20.0,
-                                      ),
+                                      tGroupThread[index]["name"],
+                                      style: const TextStyle(fontSize: 20.0),
                                     ),
-                                  )
+                                  ),
+                                  Expanded(
+                                    flex: 5,
+                                    child: Text(
+                                      "${ymd.format(DateTime.parse(tGroupThread[index]["created_at"]))}/${formatter.format(DateTime.parse(tGroupThread[index]["created_at"]).toLocal())}",
+                                      style: const TextStyle(fontSize: 18.0),
+                                    ),
+                                  ),
                                 ],
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  if (tGroupThreadStarMsgids
-                                      .contains(tGroupThread[index]["id"]))
-                                    IconButton(
-                                      onPressed: () async {
-                                        await destroyThreadStar(
-                                            tGroupThread[index]["id"]);
-                                        // if (status == true) {
-                                        //   Navigator.pushAndRemoveUntil(
-                                        //       context,
-                                        //       MaterialPageRoute(
-                                        //           builder: (context) =>
-                                        //               ShowGroupThread(
-                                        //                   message:
-                                        //                       widget.message,
-                                        //                   channelId: widget
-                                        //                       .channelId)),
-                                        //       (route) => false);
-                                        // }
-                                      },
-                                      icon: const Icon(
-                                        Icons.star,
-                                        color: Color.fromARGB(126, 22, 139, 14),
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.arrow_forward),
+                                    const SizedBox(width: 20.0),
+                                    Expanded(
+                                      child: Text(
+                                        tGroupThread[index]["groupthreadmsg"],
+                                        style: const TextStyle(
+                                          fontSize: 20.0,
+                                        ),
                                       ),
                                     )
-                                  else
-                                    IconButton(
-                                      onPressed: () async {
-                                        await createThreadStar(
-                                            tGroupThread[index]["id"]);
-                                        // if (status == true) {
-                                        //   Navigator.pushAndRemoveUntil(
-                                        //       context,
-                                        //       MaterialPageRoute(
-                                        //           builder: (context) =>
-                                        //               ShowGroupThread(
-                                        //                   message:
-                                        //                       widget.message,
-                                        //                   channelId: widget
-                                        //                       .channelId)),
-                                        //       (route) => false);
-                                        // }
-                                      },
-                                      icon: const Icon(
-                                        Icons.star_outline,
-                                        color: Color.fromARGB(126, 22, 139, 14),
-                                      ),
-                                    ),
-                                  if (user_id ==
-                                      tGroupThread[index]["m_user_id"])
-                                    IconButton(
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    if (tGroupThreadStarMsgids
+                                        .contains(tGroupThread[index]["id"]))
+                                      IconButton(
                                         onPressed: () async {
-                                          await deleteGroupThreadMessage(
-                                              tGroupThread[index]["id"],
-                                              widget.channelId);
+                                          await destroyThreadStar(
+                                              tGroupThread[index]["id"]);
                                           // if (status == true) {
                                           //   Navigator.pushAndRemoveUntil(
                                           //       context,
@@ -396,20 +390,65 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                                           // }
                                         },
                                         icon: const Icon(
-                                            Icons.delete_outline_outlined,
-                                            color: Color.fromARGB(
-                                                126, 22, 139, 14)))
-                                ],
+                                          Icons.star,
+                                          color:
+                                              Color.fromARGB(126, 22, 139, 14),
+                                        ),
+                                      )
+                                    else
+                                      IconButton(
+                                        onPressed: () async {
+                                          await createThreadStar(
+                                              tGroupThread[index]["id"]);
+                                          // if (status == true) {
+                                          //   Navigator.pushAndRemoveUntil(
+                                          //       context,
+                                          //       MaterialPageRoute(
+                                          //           builder: (context) =>
+                                          //               ShowGroupThread(
+                                          //                   message:
+                                          //                       widget.message,
+                                          //                   channelId: widget
+                                          //                       .channelId)),
+                                          //       (route) => false);
+                                          // }
+                                        },
+                                        icon: const Icon(
+                                          Icons.star_outline,
+                                          color:
+                                              Color.fromARGB(126, 22, 139, 14),
+                                        ),
+                                      ),
+                                    if (user_id ==
+                                        tGroupThread[index]["m_user_id"])
+                                      IconButton(
+                                          onPressed: () async {
+                                            await deleteGroupThreadMessage(
+                                                tGroupThread[index]["id"],
+                                                widget.channelId);
+                                            // if (status == true) {
+                                            //   Navigator.pushAndRemoveUntil(
+                                            //       context,
+                                            //       MaterialPageRoute(
+                                            //           builder: (context) =>
+                                            //               ShowGroupThread(
+                                            //                   message:
+                                            //                       widget.message,
+                                            //                   channelId: widget
+                                            //                       .channelId)),
+                                            //       (route) => false);
+                                            // }
+                                          },
+                                          icon: const Icon(
+                                              Icons.delete_outline_outlined,
+                                              color: Color.fromARGB(
+                                                  126, 22, 139, 14)))
+                                  ],
+                                ),
                               ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Divider(
-                                thickness: 1,
-                                color: Colors.grey,
-                              ),
-                            )
-                          ],
+                            
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -658,8 +697,6 @@ class _sendGroupMessageInputState extends State<sendGroupMessageInput> {
     if (message.isEmpty) {
       return;
     } else {
-      
-      
       final request = await http.post(
           Uri.parse("https://slackapi-team2.onrender.com/groupthreadmsg"),
           headers: <String, String>{

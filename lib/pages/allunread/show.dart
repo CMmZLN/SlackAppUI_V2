@@ -47,20 +47,19 @@ class _AllUnreadState extends State<AllUnread> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-      
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        
+
         print("All Unread data $data");
         setState(() {
-          
           t_direct_messages = data['t_direct_messages'];
           t_direct_threads = data['t_direct_threads'];
           t_user_channelids = data['t_user_channelids'];
           t_user_threadids = data["t_user_channelthreadids"];
           t_group_messages = data['t_group_messages'];
           t_group_threads = data['t_group_threads'];
-          
+
           print(t_direct_threads);
         });
       } else {
@@ -128,8 +127,9 @@ class _AllUnreadState extends State<AllUnread> {
                           ),
                           const SizedBox(width: 60.0),
                           Text(
-                            DateFormat('yyyy-MM-dd/ hh:mm a')
-                                .format(DateTime.parse(tDirect['created_at'])),
+                            DateFormat('yyyy-MM-dd/ hh:mm a').format(
+                                DateTime.parse(tDirect['created_at'])
+                                    .toLocal()),
                             style: const TextStyle(
                               fontSize: 18,
                             ),
@@ -211,8 +211,9 @@ class _AllUnreadState extends State<AllUnread> {
                           ),
                           const SizedBox(width: 8.0),
                           Text(
-                            DateFormat('yyyy-MM-dd/ hh:mm a')
-                                .format(DateTime.parse(tThread['created_at'])),
+                            DateFormat('yyyy-MM-dd/ hh:mm a').format(
+                                DateTime.parse(tThread['created_at'])
+                                    .toLocal()),
                             style: const TextStyle(
                               fontSize: 18,
                             ),
@@ -306,7 +307,8 @@ class _AllUnreadState extends State<AllUnread> {
                                   const SizedBox(width: 8.0),
                                   Text(
                                     DateFormat('yyyy-MM-dd/ hh:mm a').format(
-                                        DateTime.parse(tGroup['created_at'])),
+                                        DateTime.parse(tGroup['created_at'])
+                                            .toLocal()),
                                     style: const TextStyle(
                                       fontSize: 18,
                                     ),
@@ -398,7 +400,8 @@ class _AllUnreadState extends State<AllUnread> {
                               const SizedBox(width: 8.0),
                               Text(
                                 DateFormat('yyyy-MM-dd/ hh:mm a').format(
-                                    DateTime.parse(tGroupThread['created_at'])),
+                                    DateTime.parse(tGroupThread['created_at'])
+                                        .toLocal()),
                                 style: const TextStyle(
                                   fontSize: 18,
                                 ),

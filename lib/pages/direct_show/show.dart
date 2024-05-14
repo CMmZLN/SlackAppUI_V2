@@ -104,7 +104,6 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json; charset=UTF-8',
           });
-     
     } catch (error) {
       print(error);
     }
@@ -185,7 +184,6 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
           final data = jsonDecode(response.body);
           SharedPrefUtils.saveInt("rdirectsize", data);
           _fetchDirectMsgLists();
-         
         });
       } else {
         throw Exception("Failed to refresh direct messages");
@@ -234,8 +232,6 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
       isScroll = false;
     }
 
-   
-
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SizedBox(
         height: 60,
@@ -269,14 +265,27 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
                   final tDirect = t_direct_msg[index];
                   return Container(
                     margin: const EdgeInsets.all(8.0),
-                    color: const Color.fromARGB(226, 233, 238, 239),
                     padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: const Color.fromARGB(255, 119, 199, 119)
+                            .withOpacity(0.4),
+                        width: 2,
+                      ),
+                      color: (user_id == tDirect["send_user_id"])
+                          ? const  Color.fromARGB(255, 119, 199, 119)
+                            .withOpacity(0.4)
+                          : Colors.transparent,
+                    ),
+                    // Color changes for direct message
+
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          DateFormat('yyyy-MM-dd hh:m a')
-                              .format(DateTime.parse(tDirect['created_at']).toLocal()),
+                          DateFormat('yyyy-MM-dd hh:m a').format(
+                              DateTime.parse(tDirect['created_at']).toLocal()),
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,

@@ -68,10 +68,7 @@ class _MentionListsState extends State<MentionLists> {
             const Center(
               child: Text(
                 'メンションリスト',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold
-                ),
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 20),
@@ -129,7 +126,8 @@ class _MentionListsState extends State<MentionLists> {
                                   const SizedBox(width: 60.0),
                                   Text(
                                     DateFormat('yyyy-MM-dd/ hh:mm a').format(
-                                        DateTime.parse(tGroup['created_at'])),
+                                        DateTime.parse(tGroup['created_at'])
+                                            .toLocal()),
                                     style: const TextStyle(
                                       fontSize: 18,
                                     ),
@@ -169,7 +167,8 @@ class _MentionListsState extends State<MentionLists> {
                                         icon: const Icon(
                                           Icons.star,
                                           size: 25,
-                                          color: Color.fromARGB(126, 22, 139, 14),
+                                          color:
+                                              Color.fromARGB(126, 22, 139, 14),
                                         ),
                                       ),
                                     ),
@@ -182,7 +181,8 @@ class _MentionListsState extends State<MentionLists> {
                                         icon: const Icon(
                                           Icons.star_border_outlined,
                                           size: 25,
-                                          color: Color.fromARGB(126, 22, 139, 14),
+                                          color:
+                                              Color.fromARGB(126, 22, 139, 14),
                                         ),
                                       ),
                                     ),
@@ -257,7 +257,8 @@ class _MentionListsState extends State<MentionLists> {
                                   Text(
                                     DateFormat('yyyy-MM-dd/ hh:mm a').format(
                                         DateTime.parse(
-                                            tGroupThread['created_at'])),
+                                                tGroupThread['created_at'])
+                                            .toLocal()),
                                     style: const TextStyle(
                                       fontSize: 18,
                                     ),
@@ -297,7 +298,8 @@ class _MentionListsState extends State<MentionLists> {
                                         icon: const Icon(
                                           Icons.star,
                                           size: 25,
-                                          color: Color.fromARGB(126, 22, 139, 14),
+                                          color:
+                                              Color.fromARGB(126, 22, 139, 14),
                                         ),
                                       ),
                                     ),
@@ -310,7 +312,8 @@ class _MentionListsState extends State<MentionLists> {
                                         icon: const Icon(
                                           Icons.star_border_outlined,
                                           size: 25,
-                                          color: Color.fromARGB(126, 22, 139, 14),
+                                          color:
+                                              Color.fromARGB(126, 22, 139, 14),
                                         ),
                                       ),
                                     ),

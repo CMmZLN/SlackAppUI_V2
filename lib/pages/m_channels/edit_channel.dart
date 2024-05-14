@@ -154,12 +154,12 @@ class _EditChannelState extends State<EditChannel> {
                         editChannel(
                             channelNameController.text, channel_status!);
                       });
-                      Navigator.push(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const MyHomePage(
                                   title: 'SLACK APP',
-                                )),
+                                )),(route)=>false
                       );
                     }
                   },
