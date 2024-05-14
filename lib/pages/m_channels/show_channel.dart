@@ -41,7 +41,7 @@ class _ShowChannelState extends State<ShowChannel> {
   int channelId = 0;
   dynamic channelData = [];
   dynamic channelUsersLists = [];
-
+  dynamic adminuserid;
   String channelName = "";
   int? mUserId;
   int? user_id;
@@ -110,6 +110,7 @@ class _ShowChannelState extends State<ShowChannel> {
           tGroupStarMsgids =
               data["retrieveGroupMessage"]["t_group_star_msgids"];
           channelUsersLists = data["retrieveGroupMessage"]["m_channel_users"];
+          adminuserid = data["retrieveGroupMessage"]["userid"];
         }
       });
     }
@@ -462,7 +463,7 @@ class _ShowChannelState extends State<ShowChannel> {
                         const SizedBox(width: 10.0),
                         Row(
                           children: [
-                            if (mChannelIds.contains(channelId))
+                            if (mChannelIds.contains(channelId) && adminuserid == user_id)
                               ElevatedButton(
                                 onPressed: () {
                                   Navigator.push(
@@ -488,7 +489,7 @@ class _ShowChannelState extends State<ShowChannel> {
                                   ],
                                 ),
                               ),
-                            if (mChannelIds.contains(channelId))
+                            if (mChannelIds.contains(channelId) && adminuserid == user_id)
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     elevation: 0,
