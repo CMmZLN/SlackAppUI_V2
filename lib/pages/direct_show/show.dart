@@ -13,6 +13,8 @@ import 'package:Team2SlackApp/pages/leftpannels/leftpannel.dart';
 import 'package:Team2SlackApp/pages/direct_thread_show/showthread.dart';
 import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 
+ScrollController directMessageScroller = ScrollController();
+
 class directmsgshow extends StatefulWidget {
   const directmsgshow({super.key});
 
@@ -63,7 +65,6 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
   bool isScroll = true;
 
   // int? mUserId;
-  ScrollController directMessageScroller = ScrollController();
 
   // Map<String,dynamic>? t_direct;
 
@@ -76,7 +77,7 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
 
     final response = await http.get(
       Uri.parse(
-          "https://slackapi-team2.onrender.com/m_users/$s_user_id?user_id=$user_id&r_direct_size=$r_direct_size"),
+          "https://slackapi-team2.onrender.com/m_users/$s_user_id?user_id=$user_id"),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json; charset=UTF-8',
@@ -274,8 +275,8 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
                         width: 2,
                       ),
                       color: (user_id == tDirect["send_user_id"])
-                          ? const  Color.fromARGB(255, 119, 199, 119)
-                            .withOpacity(0.4)
+                          ? const Color.fromARGB(255, 119, 199, 119)
+                              .withOpacity(0.4)
                           : Colors.transparent,
                     ),
                     // Color changes for direct message
@@ -323,7 +324,7 @@ class _DirectMessageListsState extends State<DirectMessageLists> {
                             // ),
                             IconButton(
                               onPressed: () {
-                                _directmsgshow(tDirect['id']);
+                                _directmsgshow(t_direct_msg[index]['id']);
                               },
                               icon: const Icon(
                                 Icons.message_rounded,
@@ -418,37 +419,8 @@ class _SendDirectMessageState extends State<SendDirectMessage> {
   int? user_id;
   int? s_user_id;
 
-  Future<void> _sendDirectmsgLists() async {
-    token = await SharedPrefUtils.getStr("token");
-    s_user_id = await SharedPrefUtils.getInt("s_user_id");
-    user_id = await SharedPrefUtils.getInt("userid");
-
-    final String message = _messageController.text;
-    if (message.isEmpty) {
-      print(
-          "messge is empty"); // Show an error message or handle empty message case
-      return;
-    } else {
-      print(message);
-    }
-    final response = await http.post(
-      Uri.parse(
-          "https://slackapi-team2.onrender.com/directmsg?send_user_id=$user_id&receive_user_id=$s_user_id"),
-      headers: <String, String>{
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'message': message,
-      }),
-    );
-    // final data = jsonDecode(response.body);
-    setState(() {
-      if (response.statusCode == 200) {
-        status = true;
-      }
-    });
-  }
+  bool _btnActive = false;
+  String sendDirectText = "";
 
   @override
   Widget build(BuildContext context) {
@@ -464,30 +436,56 @@ class _SendDirectMessageState extends State<SendDirectMessage> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                   contentPadding: EdgeInsets.all(5)),
+              onChanged: (dynamic value) {
+                sendDirectText = value;
+                setState(() {
+                  _btnActive = value.isNotEmpty && value[0] != " " ||
+                          value.contains(RegExp(
+                              r"[a-zA-Z一-龯ぁ-んァ-ン0-9$&+,:;=?@#|'<>.^*()%!-]"))
+                      ? true
+                      : false;
+                });
+              },
             ),
           ),
           const SizedBox(width: 10),
           TextButton(
-            onPressed: () async {
-              await _sendDirectmsgLists();
-              if (status == true) {
+            onPressed: () {
+              _btnActive == true
+                  ? _sendDirectmsgLists(message: sendDirectText)
+                  : null;
+              if (_btnActive == true) {
                 // Navigator.push(
                 //   context,
                 //   MaterialPageRoute(
                 //       builder: (context) => const directmsgshow()),
                 // );
                 _messageController.clear();
+                setState(() {
+                  _btnActive = false;
+                });
               }
+              SchedulerBinding.instance.addPostFrameCallback((_) {
+                directMessageScroller.animateTo(
+                  directMessageScroller.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 60),
+                  curve: Curves.easeOut,
+                );
+              });
             },
             style: TextButton.styleFrom(
                 fixedSize: const Size(80, 48),
-                backgroundColor: const Color.fromARGB(126, 22, 139, 14),
+                backgroundColor: _btnActive
+                    ? const Color.fromARGB(126, 22, 139, 14)
+                    : Colors.grey[300],
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5))),
-            child: const Text(
+            child: Text(
               '送信',
               style: TextStyle(
-                color: Colors.white,
+                color: _btnActive
+                    ? Colors.white
+                    : const Color.fromARGB(126, 22, 139, 14),
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
@@ -496,5 +494,37 @@ class _SendDirectMessageState extends State<SendDirectMessage> {
         ],
       ),
     );
+  }
+
+  Future _sendDirectmsgLists({required String message}) async {
+    token = await SharedPrefUtils.getStr("token");
+    s_user_id = await SharedPrefUtils.getInt("s_user_id");
+    user_id = await SharedPrefUtils.getInt("userid");
+
+    // String message = _messageController.text;
+    if (message.isEmpty) {
+      print(
+          "messge is empty"); // Show an error message or handle empty message case
+      return;
+    } else {
+      print("Showing Message sent By user $message");
+    }
+    final response = await http.post(
+      Uri.parse(
+          "https://slackapi-team2.onrender.com/directmsg?send_user_id=$user_id&receive_user_id=$s_user_id"),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'message': message.trim(),
+      }),
+    );
+    // final data = jsonDecode(response.body);
+    setState(() {
+      if (response.statusCode == 200) {
+        status = true;
+      }
+    });
   }
 }

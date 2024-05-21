@@ -240,11 +240,11 @@ class _ChannelUsersState extends State<ChannelUsers> {
             padding: EdgeInsets.fromLTRB(10, 30, 10, 0),
             child: Row(
               children: [
-                SizedBox(width: 90, child: Text("名前")),
+                SizedBox(width: 90, child: Text("名前",style: TextStyle(fontWeight: FontWeight.bold),)),
                 SizedBox(width: 20),
-                SizedBox(width: 140, child: Text("メール")),
+                SizedBox(width: 140, child: Text("メール",style: TextStyle(fontWeight: FontWeight.bold),)),
                 SizedBox(width: 80),
-                SizedBox(width: 60, child: Text("設定")),
+                SizedBox(width: 60, child: Text("設定",style: TextStyle(fontWeight: FontWeight.bold),)),
               ],
             ),
           ),

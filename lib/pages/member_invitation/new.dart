@@ -106,7 +106,6 @@ class _MemberInviteState extends State<MemberInvite> {
     timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
-             
               // print(member_status);
               if (member_status == false) {
                 timerHome?.cancel();
@@ -128,7 +127,7 @@ class _MemberInviteState extends State<MemberInvite> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(
-              height: 30,
+              height: 10,
             ),
             const Center(
               child: Text(
@@ -163,9 +162,9 @@ class _MemberInviteState extends State<MemberInvite> {
             const SizedBox(
               height: 20,
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            // const SizedBox(
+            //   height: 20,
+            // ),
             const Text(
               'チャンネル名 : ',
               style: TextStyle(

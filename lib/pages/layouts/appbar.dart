@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Team2SlackApp/pages/layouts/log_out.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/change_password/new.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
@@ -85,6 +86,7 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
         IconButton(
           icon: const Icon(Icons.home),
           onPressed: () {
+            FocusScope.of(context).unfocus();
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -109,8 +111,12 @@ class _MyAppBarWidgetState extends State<MyAppBarWidget> {
           icon: const Icon(Icons.logout),
           onPressed: () {
             timerHome?.cancel();
-
-            _Logout(user_id!);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>const Logout()),
+            );
+            // _Logout(user_id!);
           },
         ),
       ],

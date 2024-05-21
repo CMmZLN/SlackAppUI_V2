@@ -12,6 +12,8 @@ import 'package:Team2SlackApp/pages/layouts/appbar.dart';
 import 'package:Team2SlackApp/pages/leftpannels/leftpannel.dart';
 import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 
+ScrollController directThreadMessageScroller = ScrollController();
+
 class DirectThreadShow extends StatefulWidget {
   const DirectThreadShow({super.key, required this.id});
   final int id;
@@ -19,10 +21,8 @@ class DirectThreadShow extends StatefulWidget {
   State<DirectThreadShow> createState() => _DirectThreadShowState();
 }
 
-
-
 class DirectThreadMessageLists extends StatefulWidget {
-  int id;
+  int? id;
   DirectThreadMessageLists({super.key, required this.id});
 
   @override
@@ -181,8 +181,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
 
   @override
   void initState() {
-    super.initState();
-    _fetchDirectThreadMsg(widget.id);
+    _fetchDirectThreadMsg(widget.id!);
     // timer = Timer.periodic(
     //     const Duration(seconds: 2),
     //     (Timer t) => setState(() {
@@ -200,7 +199,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
                     MaterialPageRoute(builder: (context) => const Logout()),
                     (route) => false);
               }
-              _fetchDirectThreadMsg(widget.id);
+              _fetchDirectThreadMsg(widget.id!);
             }));
 
     // timer = Timer.periodic(
@@ -208,6 +207,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
     //     (Timer t) => {
     //           if (timer?.isActive == true) {_fetchDirectThreadMsg(widget.id)}
     //         });
+    super.initState();
   }
 
   @override
@@ -216,7 +216,6 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
     super.dispose();
   }
 
-  ScrollController directThreadMessageScroller = ScrollController();
   @override
   Widget build(BuildContext context) {
     if (directThreadMessageScroller.hasClients && isScroll) {
@@ -251,7 +250,7 @@ class _DirectThreadMessageListsState extends State<DirectThreadMessageLists> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              directmsgshow()),
+                                              const directmsgshow()),
                                       (route) => false);
                                 },
                                 icon: const Icon(Icons.arrow_back_ios_rounded)),
@@ -512,8 +511,11 @@ class _SendDirectThreadMessageState extends State<SendDirectThreadMessage> {
   int? user_id;
   int? s_user_id;
 
-  Future<void> _sendDirectThread(int id) async {
-    final String message = messageController.text;
+  bool _btnActive = false;
+  String sendThreadText = "";
+
+  Future<void> _sendDirectThread(String message, int id) async {
+    // final String message = messageController.text;
     token = await SharedPrefUtils.getStr("token");
     user_id = await SharedPrefUtils.getInt("userid");
     s_user_id = await SharedPrefUtils.getInt("s_user_id");
@@ -533,7 +535,7 @@ class _SendDirectThreadMessageState extends State<SendDirectThreadMessage> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(
-          <String, dynamic>{'directthreadmsg': message},
+          <String, dynamic>{'directthreadmsg': message.trim()},
         ));
     // final data = jsonDecode(response.body);
     setState(() {
@@ -557,14 +559,35 @@ class _SendDirectThreadMessageState extends State<SendDirectThreadMessage> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                   contentPadding: EdgeInsets.all(5)),
+              onChanged: (dynamic value) {
+                sendThreadText = value;
+                setState(() {
+                  _btnActive = value.isNotEmpty && value[0] != " " ||
+                          value.contains(RegExp(
+                              r"[a-zA-Z一-龯ぁ-んァ-ン0-9$&+,:;=?@#|'<>.^*()%!-]"))
+                      ? true
+                      : false;
+                });
+              },
             ),
           ),
           const SizedBox(width: 10),
           TextButton(
-            onPressed: () async {
-              await _sendDirectThread(widget.id);
-              if (status == true) {
+            onPressed: () {
+              _btnActive ? _sendDirectThread(sendThreadText, widget.id) : null;
+              if (_btnActive == true) {
                 messageController.clear();
+                setState(() {
+                  _btnActive = false;
+                });
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  directThreadMessageScroller.animateTo(
+                    directThreadMessageScroller.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 60),
+                    curve: Curves.easeOut,
+                  );
+                });
+
                 // Navigator.push(
                 //     context,
                 //     MaterialPageRoute(
@@ -576,13 +599,17 @@ class _SendDirectThreadMessageState extends State<SendDirectThreadMessage> {
             },
             style: TextButton.styleFrom(
                 fixedSize: const Size(80, 48),
-                backgroundColor: const Color.fromARGB(126, 22, 139, 14),
+                backgroundColor: _btnActive
+                    ? const Color.fromARGB(126, 22, 139, 14)
+                    : Colors.grey[300],
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5))),
-            child: const Text(
+            child: Text(
               '送信',
               style: TextStyle(
-                color: Colors.white,
+                color: _btnActive
+                    ? Colors.white
+                    : const Color.fromARGB(126, 22, 139, 14),
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
@@ -593,7 +620,6 @@ class _SendDirectThreadMessageState extends State<SendDirectThreadMessage> {
     );
   }
 }
-
 
 class _DirectThreadShowState extends State<DirectThreadShow> {
   @override

@@ -131,7 +131,7 @@ class _AllUnreadState extends State<AllUnread> {
                                 DateTime.parse(tDirect['created_at'])
                                     .toLocal()),
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                             ),
                           ),
                         ],
@@ -215,7 +215,7 @@ class _AllUnreadState extends State<AllUnread> {
                                 DateTime.parse(tThread['created_at'])
                                     .toLocal()),
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                             ),
                           ),
                         ],
@@ -310,7 +310,7 @@ class _AllUnreadState extends State<AllUnread> {
                                         DateTime.parse(tGroup['created_at'])
                                             .toLocal()),
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ],
@@ -403,7 +403,7 @@ class _AllUnreadState extends State<AllUnread> {
                                     DateTime.parse(tGroupThread['created_at'])
                                         .toLocal()),
                                 style: const TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                 ),
                               ),
                             ],

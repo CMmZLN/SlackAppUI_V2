@@ -13,6 +13,8 @@ import 'package:Team2SlackApp/pages/starlists/show.dart';
 import 'package:Team2SlackApp/pages/threadlists/show.dart';
 import 'package:Team2SlackApp/pages/user_manage/usermanage.dart';
 
+dynamic mChannelIds = [];
+
 class Leftpannel extends StatefulWidget {
   const Leftpannel({super.key});
 
@@ -32,8 +34,9 @@ class _LeftpannelState extends State<Leftpannel> {
   int? user_id;
   int all_unread_count = 0;
   dynamic direct_msgcounts = [];
-  dynamic mChannelIds = [];
   dynamic mPublicChannels = [];
+  List<int> mPublicChannelIds = [];
+  bool showJoinablePublicChannels = false;
 
   Future<void> fetchData() async {
     token = await SharedPrefUtils.getStr("token");
@@ -62,10 +65,11 @@ class _LeftpannelState extends State<Leftpannel> {
         direct_msgcounts = body['direct_msgcounts'];
         mChannelIds = body["m_channelsids"];
         mPublicChannels = body["m_p_channels"];
-       
+
         // print(all_unread_count);
       });
     }
+    print(mChannels);
   }
 
   @override
@@ -77,13 +81,23 @@ class _LeftpannelState extends State<Leftpannel> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    fetchData();
+    // fetchData();
     const Leftpannel();
   }
 
   @override
   Widget build(BuildContext context) {
     int count = 0;
+
+    for (var channel in mPublicChannels) {
+      mPublicChannelIds.add(channel['id']);
+    }
+    print("mPublicChannelIds $mPublicChannelIds");
+    for (var mPublicChannelId in mPublicChannelIds) {
+      if (!mChannelIds.contains(mPublicChannelId)) {
+        showJoinablePublicChannels = true;
+      }
+    }
     return Drawer(
       child: Scrollbar(
         child: ListView(
@@ -250,6 +264,20 @@ class _LeftpannelState extends State<Leftpannel> {
                 },
               ),
             ),
+            Row(
+              children: [
+                const SizedBox(
+                  width: 56,
+                ),
+                (mChannels.length > 0)
+                    ? const Text(
+                        "参加",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      )
+                    : Container()
+              ],
+            ),
             ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
@@ -279,42 +307,61 @@ class _LeftpannelState extends State<Leftpannel> {
                         title: Text(mChannels[index]["channel_name"],
                             style: const TextStyle(fontSize: 16)),
                         onTap: () {
-                          Navigator.pushReplacement(
+                          Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ShowChannel(
                                         channelData: mChannels[index],
-                                      )));
+                                      )),(route)=>false);
                         },
                         // dense: true,
                       ),
                     )),
+            Row(
+              children: [
+                const SizedBox(
+                  width: 56,
+                ),
+                showJoinablePublicChannels
+                    ? const Text(
+                        "未参加",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      )
+                    : Container()
+              ],
+            ),
             ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
                 shrinkWrap: true, // important
                 itemCount: mPublicChannels.length,
                 itemBuilder: (context, index) {
                   if (!mChannelIds.contains(mPublicChannels[index]["id"])) {
-                    return Container(
-                      padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.public,
-                          size: 15,
-                          color: Color.fromARGB(126, 22, 139, 14),
+                    return Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
+                          child: ListTile(
+                            leading: const Icon(
+                              Icons.public,
+                              size: 15,
+                              color: Color.fromARGB(126, 22, 139, 14),
+                            ),
+                            title: Text(mPublicChannels[index]["channel_name"],
+                                style: const TextStyle(fontSize: 16)),
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ShowChannel(
+                                        channelData: mPublicChannels[index])),
+                              );
+                            },
+                            dense: true,
+                          ),
                         ),
-                        title: Text(mPublicChannels[index]["channel_name"],
-                            style: const TextStyle(fontSize: 16)),
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ShowChannel(
-                                    channelData: mPublicChannels[index])),
-                          );
-                        },
-                        dense: true,
-                      ),
+                      ],
                     );
                   } else {
                     return Container();

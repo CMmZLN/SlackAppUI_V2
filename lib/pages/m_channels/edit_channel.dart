@@ -136,6 +136,7 @@ class _EditChannelState extends State<EditChannel> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
+                
                     validator: (String? value) {
                       return value!.isEmpty ? 'チャネル名を入力してください。' : null;
                     },
@@ -154,6 +155,7 @@ class _EditChannelState extends State<EditChannel> {
                         editChannel(
                             channelNameController.text, channel_status!);
                       });
+                       FocusScope.of(context).unfocus();
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(

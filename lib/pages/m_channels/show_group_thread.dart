@@ -11,6 +11,8 @@ import 'package:Team2SlackApp/pages/leftpannels/leftpannel.dart';
 import 'package:Team2SlackApp/pages/m_channels/show_channel.dart';
 import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 
+ScrollController threadScroller = ScrollController();
+
 class ShowGroupThread extends StatefulWidget {
   ShowGroupThread({
     super.key,
@@ -49,7 +51,6 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
   Timer? timer;
 
   bool isScroll = true;
-  ScrollController threadScroller = ScrollController();
 
   Future showThreadMessage(int channelId, int messageId) async {
     token = await SharedPrefUtils.getStr("token");
@@ -244,7 +245,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                             flex: 5,
                             child: Text(
                                 "$tGroupMessageYMD/$tGroupMessageSendHour",
-                                style: const TextStyle(fontSize: 18.0)),
+                                style: const TextStyle(fontSize: 16.0)),
                           )
                         ],
                       ),
@@ -343,7 +344,7 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                                     flex: 5,
                                     child: Text(
                                       "${ymd.format(DateTime.parse(tGroupThread[index]["created_at"]))}/${formatter.format(DateTime.parse(tGroupThread[index]["created_at"]).toLocal())}",
-                                      style: const TextStyle(fontSize: 18.0),
+                                      style: const TextStyle(fontSize: 16.0),
                                     ),
                                   ),
                                 ],
@@ -446,7 +447,6 @@ class _ShowGroupThreadState extends State<ShowGroupThread> {
                                   ],
                                 ),
                               ),
-                            
                             ],
                           ),
                         ),
@@ -566,6 +566,7 @@ class sendGroupMessageInput extends StatefulWidget {
 
 class _sendGroupMessageInputState extends State<sendGroupMessageInput> {
   String threadMsg = "";
+  bool _btnActive = false;
 
   GlobalKey<FlutterMentionsState> key = GlobalKey<FlutterMentionsState>();
 
@@ -583,8 +584,16 @@ class _sendGroupMessageInputState extends State<sendGroupMessageInput> {
             padding: const EdgeInsets.only(bottom: 5, left: 5),
             child: FlutterMentions(
               onMentionAdd: addMentionedUser,
-              onChanged: (value) {
+              onChanged: (dynamic value) {
                 threadMsg = value;
+
+                setState(() {
+                  _btnActive = value.isNotEmpty && value[0] != " " ||
+                          value.contains(RegExp(
+                              r"[a-zA-Z一-龯ぁ-んァ-ン0-9$&+,:;=?@#|'<>.^*()%!-]"))
+                      ? true
+                      : false;
+                });
               },
               key: key,
               suggestionPosition: SuggestionPosition.Top,
@@ -641,16 +650,30 @@ class _sendGroupMessageInputState extends State<sendGroupMessageInput> {
           padding: const EdgeInsets.only(bottom: 5, right: 5),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(126, 22, 139, 14),
+                backgroundColor: _btnActive
+                    ? const Color.fromARGB(126, 22, 139, 14)
+                    : Colors.grey[300],
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5))),
-            onPressed: () async {
-              await sendGroupThreadMessage(
-                  threadMsg, widget.sGroupMessageId, widget.channelId);
-              if (status == true) {
+            onPressed: () {
+              _btnActive
+                  ? sendGroupThreadMessage(
+                      threadMsg, widget.sGroupMessageId, widget.channelId)
+                  : null;
+              if (_btnActive == true) {
                 key.currentState?.controller?.clear();
+                setState(() {
+                  _btnActive = false;
+                });
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  threadScroller.animateTo(
+                    threadScroller.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.linear,
+                  );
+                });
                 // Navigator.pushAndRemoveUntil(
                 //     context,
                 //     MaterialPageRoute(
@@ -660,9 +683,11 @@ class _sendGroupMessageInputState extends State<sendGroupMessageInput> {
                 //     (route) => false);
               }
             },
-            child: const Text("送信",
+            child: Text("送信",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: _btnActive
+                      ? Colors.white
+                      : const Color.fromARGB(126, 22, 139, 14),
                   fontSize: 20.0,
                 )),
           ),
@@ -704,7 +729,7 @@ class _sendGroupMessageInputState extends State<sendGroupMessageInput> {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: jsonEncode(<String, dynamic>{
-            'threadmsg': message,
+            'threadmsg': message.trim(),
             'workspace_id': workspaceId,
             'user_id': userId,
             's_group_message_id': sGroupMessageId,

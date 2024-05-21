@@ -50,7 +50,7 @@ class _ChannelCreateState extends State<ChannelCreate> {
 
   @override
   void initState() {
-    channel_status = 0;
+    channel_status = 1;
     timer = Timer.periodic(
         const Duration(seconds: 2),
         (Timer t) => setState(() {
