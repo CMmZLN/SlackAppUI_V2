@@ -338,7 +338,6 @@
 //   );
 // }
 
-import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -631,7 +630,7 @@ class _workspacenewState extends State<workspacenew> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Center(
@@ -667,7 +666,7 @@ class _workspacenewState extends State<workspacenew> {
                                     end: Alignment.bottomRight),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                    color: Color(0xff31b8b1), width: 2),
+                                    color: const Color(0xff31b8b1), width: 2),
                               ),
                               height: 30,
                               child: const Center(

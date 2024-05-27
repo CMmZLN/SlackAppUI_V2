@@ -415,7 +415,7 @@ import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 bool status = false;
 
 class UserManage extends StatefulWidget {
-  const UserManage({Key? key}) : super(key: key);
+  const UserManage({super.key});
 
   @override
   State<UserManage> createState() => _UserManageState();

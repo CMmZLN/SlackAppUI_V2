@@ -4,7 +4,6 @@ import 'package:Team2SlackApp/pages/share_pref_utils.dart';
 import 'package:Team2SlackApp/pages/static_pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:Team2SlackApp/pages/m_workspace/new.dart';
-import 'package:Team2SlackApp/pages/sessions/new.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -65,7 +64,7 @@ class _WelcomeState extends State<Welcome> {
           FocusScope.of(context).unfocus();
         },
         child: SingleChildScrollView(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           child: Stack(
             key: _formKey,
             children: [

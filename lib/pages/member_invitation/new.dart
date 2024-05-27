@@ -26,6 +26,7 @@ class _MemberInviteState extends State<MemberInvite> {
   dynamic m_workspace = {};
   List<dynamic> m_channels = [];
   Timer? timer;
+  final _formKey = GlobalKey<FormState>();
 
   // post member data
   Map<String, dynamic> user_workspace = {};
@@ -121,155 +122,176 @@ class _MemberInviteState extends State<MemberInvite> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MyAppBarWidget(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 10,
-            ),
-            const Center(
-              child: Text(
-                'メンバー招待',
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              const Center(
+                child: Text(
+                  'メンバー招待',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Visibility(
+                visible: _isTextBoxVisible,
+                child: Container(
+                  width: 450.0,
+                  color: const Color.fromARGB(
+                      255, 233, 201, 211), // Background color
+                  padding: const EdgeInsets.all(8.0), // Padding around the text
+                  child: Center(
+                    child: Text(
+                      error,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 223, 59, 47), // Text color
+                        // Add more text styling as needed
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              // const SizedBox(
+              //   height: 20,
+              // ),
+              const Text(
+                'チャンネル名 : ',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 30,
+                  fontSize: 23,
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Visibility(
-              visible: _isTextBoxVisible,
-              child: Container(
-                width: 450.0,
-                color: const Color.fromARGB(
-                    255, 233, 201, 211), // Background color
-                padding: const EdgeInsets.all(8.0), // Padding around the text
-                child: Center(
-                  child: Text(
-                    error,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 223, 59, 47), // Text color
-                      // Add more text styling as needed
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
-            const Text(
-              'チャンネル名 : ',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 23,
-              ),
-            ),
-            PopupMenuButton(
-              itemBuilder: (context) {
-                return m_channels.map((item) {
-                  // selectedItemValue = item['id'];
-                  return PopupMenuItem(
-                    value: item['id'],
-                    child: Text(item['channel_name']),
-                  );
-                }).toList();
-              },
-              onSelected: (value) {
-                setState(() {
-                  selectedItemValue = value as int;
+              PopupMenuButton(
+                itemBuilder: (context) {
+                  return m_channels.map((item) {
+                    // selectedItemValue = item['id'];
+                    return PopupMenuItem(
+                      value: item['id'],
+                      child: Text(item['channel_name']),
+                    );
+                  }).toList();
+                },
+                onSelected: (value) {
+                  setState(() {
+                    selectedItemValue = value as int;
 
-                  // You may want to retrieve the corresponding channel name as well
-                  selectedItem = m_channels.firstWhere(
-                      (item) => item['id'] == value)['channel_name'];
-                });
-              },
-              child: ListTile(
-                title: Text(
-                  selectedItem ?? 'チャンネル選択',
-                  style: const TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-                trailing: const Icon(Icons.arrow_drop_down),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const Text(
-              'メール',
-              style: TextStyle(
-                fontSize: 23,
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            SizedBox(
-              width: 600,
-              child: TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 10.0),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: SizedBox(
-                width: 100,
-                height: 45,
-                child: TextButton(
-                  onPressed: () async {
-                    await _postMemberData(
-                        channelNameController.text, emailController.text);
-                    if (error == '') {
-                      setState(() {
-                        _isTextBoxVisible = false;
-                      });
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MyHomePage(
-                              title: "SLACK APP",
-                            ),
-                          ),
-                          (route) => false);
-                    } else {
-                      setState(() {
-                        _isTextBoxVisible = true;
-                      });
-                    }
-                  },
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(126, 22, 139, 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5)),
-                  ),
-                  child: const Text(
-                    '招待',
-                    style: TextStyle(
+                    // You may want to retrieve the corresponding channel name as well
+                    selectedItem = m_channels.firstWhere(
+                        (item) => item['id'] == value)['channel_name'];
+                  });
+                },
+                child: ListTile(
+                  title: Text(
+                    selectedItem ?? 'チャンネル選択',
+                    style: const TextStyle(
                       fontSize: 20,
-                      color: Colors.white,
+                    ),
+                  ),
+                  trailing: const Icon(Icons.arrow_drop_down),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Text(
+                'メール',
+                style: TextStyle(
+                  fontSize: 23,
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              SizedBox(
+                width: 600,
+                child: TextFormField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      errorStyle: TextStyle(
+                        color: Colors.red,
+                        fontSize: 16,
+                      )),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return null;
+                    }
+                    //Email validation regex pattern
+                    final emailRegExp = RegExp(
+                        r'^[\w+\-.]+@[a-z\d\-.]+\.[a-z]+$',
+                        caseSensitive: false);
+                    if (!emailRegExp.hasMatch(value)) {
+                      return '有効なメールアドレスを入力してください。';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Center(
+                child: SizedBox(
+                  width: 100,
+                  height: 45,
+                  child: TextButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await _postMemberData(
+                            channelNameController.text, emailController.text);
+                        if (error == '') {
+                          setState(() {
+                            _isTextBoxVisible = false;
+                          });
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MyHomePage(
+                                  title: "SLACK APP",
+                                ),
+                              ),
+                              (route) => false);
+                        } else {
+                          setState(() {
+                            _isTextBoxVisible = true;
+                          });
+                        }
+                      }
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(126, 22, 139, 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                    ),
+                    child: const Text(
+                      '招待',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       drawer: const Leftpannel(),
